@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
                                                                                                                    //Sellect the back Image
-       /* back_imageView=(ImageView) findViewById(R.id.backImage);
+        back_imageView=(ImageView) findViewById(R.id.backImage);
         back_imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 gallery.setType("image/*");
                 startActivityForResult(Intent.createChooser(gallery, "Sellect Orginal Image"), 1);
             }
-        });*/
+        });
                                                                                                                //For submit Image to fairbase
         submit_data.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-       /* if (resultCode == RESULT_OK && requestCode == 1) {
+        if (resultCode == RESULT_OK && requestCode == 1) {
             back_imageUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), back_imageUri);
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }*/
+        }
 }
                                                                                                                                         //image uploding
      private void Imagesubmit(){
