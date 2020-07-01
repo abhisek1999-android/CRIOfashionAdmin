@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back1"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/productDescription"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="361dp"
+        android:background="@drawable/button_background"
+        android:onClick="prodectAdd"
+        android:text="submit" />
+
+    <EditText
+        android:id="@+id/productPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/companyName"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/textarea_background"
+        android:hint="Enter Price"
+        android:padding="8dp"
+
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        android:textSize="18sp" />
+
+
+    <EditText
+        android:id="@+id/productDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productPrice"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/textarea_background"
+        android:gravity="top"
+        android:hint="Product Description"
+        android:inputType="text|textMultiLine"
+        android:lines="4"
+        android:padding="8dp"
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/productOverview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productDescription"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:gravity="top"
+        android:hint="Product Overview"
+        android:inputType="text|textMultiLine"
+        android:lines="4"
+        android:padding="8dp"
+        android:background="@drawable/textarea_background"
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/productName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/textarea_background"
+        android:hint="Product Name"
+        android:padding="8dp"
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF" />
+
+    <EditText
+        android:id="@+id/companyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productName"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/textarea_background"
+        android:hint="Company Name"
+        android:padding="8dp"
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Insert Product"
+        android:textAlignment="center"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="24sp"
+        android:textStyle="bold|italic" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/fontImage"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/productDescription"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="200dp"
+        android:src="@drawable/ic_baseline_account_box_24" />
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fontImage"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="-40dp"
+        android:text="Front Image"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+    android:id="@+id/backImage"
+    android:layout_width="100dp"
+    android:layout_height="150dp"
+    android:layout_below="@id/productDescription"
+    android:layout_marginLeft="150dp"
+    android:layout_marginTop="200dp"
+    android:src="@drawable/ic_baseline_account_box_24" />
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fontImage"
+        android:layout_marginLeft="150dp"
+        android:layout_marginTop="-40dp"
+        android:gravity="left"
+        android:text="Back Image"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/orginalImage"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:layout_below="@id/productDescription"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="200dp"
+        android:src="@drawable/ic_baseline_account_box_24" />
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fontImage"
+        android:layout_marginLeft="280dp"
+        android:layout_marginTop="-40dp"
+        android:gravity="left"
+        android:text="Orginal Image"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+    <Spinner
+        android:id="@+id/productType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productOverview"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/textarea_background"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:padding="7dp"
+        android:entries="@array/Types">
+    </Spinner>
+    <Spinner
+        android:id="@+id/productFor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productType"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/textarea_background"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:padding="7dp"
+        android:entries="@array/For"
+        />
+</RelativeLayout>

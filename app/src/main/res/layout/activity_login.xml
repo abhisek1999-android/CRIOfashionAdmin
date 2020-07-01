@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back4"
+    tools:context=".LoginActivity"
+    tools:ignore="ExtraText">
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="367dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/button_background"
+        android:fontFamily="serif"
+        android:padding="15dp"
+        android:text="Login"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:textStyle="bold|italic" />
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="367dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextUserId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/textarea_background"
+        android:ems="10"
+        android:hint="Enter Your Password"
+        android:inputType="textPersonName"
+        android:padding="15dp"
+
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textColorHint="@color/common_google_signin_btn_text_dark_default" />
+
+    <EditText
+        android:id="@+id/editTextUserId"
+        android:layout_width="367dp"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="240dp"
+        android:background="@drawable/textarea_background"
+        android:ems="10"
+        android:hint="Enter Your UserId"
+        android:inputType="textPersonName"
+        android:textAlignment="textStart"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textColorHighlight="#FF0000"
+        android:textColorHint="@color/common_google_signin_btn_text_dark_default" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="243dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="Authenticator Login"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="#E8FF00"
+        android:textSize="30sp"
+        android:textStyle="bold|italic" />
+</RelativeLayout>

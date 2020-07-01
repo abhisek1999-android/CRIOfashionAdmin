@@ -1,0 +1,93 @@
+{
+  "project_info": {
+    "project_number": "865301857788",
+    "firebase_url": "https://criofashion.firebaseio.com",
+    "project_id": "criofashion",
+    "storage_bucket": "criofashion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865301857788:android:6306355c5da78e7edede79",
+        "android_client_info": {
+          "package_name": "com.sn77.crio.criofashion.date20200621954"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "865301857788-jrbrbs3pu3k7nfh5fgsavr4lnjupiec9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sn77.crio.criofashion.date20200621954",
+            "certificate_hash": "ba6a8219d448307686dd45ea9721648e4b370f77"
+          }
+        },
+        {
+          "client_id": "865301857788-rdmjcr5p0cfrufpiclvjmg1pucvat273.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sn77.crio.criofashion.date20200621954",
+            "certificate_hash": "4c20a33155e9519f0d334c30bd347b0f6575afe7"
+          }
+        },
+        {
+          "client_id": "865301857788-mtq52271jv6tlccsa6akca7bfo7cub3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3xovhphKCuCioa9Xxpcx4vFe3-QWGrGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "865301857788-mtq52271jv6tlccsa6akca7bfo7cub3r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865301857788:android:6cfe871ec3d8c609dede79",
+        "android_client_info": {
+          "package_name": "com.sn77.crio.criofashionadmin.date20200627921am"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "865301857788-vlk3k54o8q3hmgnfhqs2m8q4vjf848n5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sn77.crio.criofashionadmin.date20200627921am",
+            "certificate_hash": "ba6a8219d448307686dd45ea9721648e4b370f77"
+          }
+        },
+        {
+          "client_id": "865301857788-mtq52271jv6tlccsa6akca7bfo7cub3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3xovhphKCuCioa9Xxpcx4vFe3-QWGrGI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "865301857788-mtq52271jv6tlccsa6akca7bfo7cub3r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

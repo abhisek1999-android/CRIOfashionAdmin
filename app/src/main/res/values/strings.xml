@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">CRIOfashionAdmin</string>
+    <string-array name="Types">
+        <item>QR Shirt</item>
+        <item>Fan Shirt</item>
+        <item>Fashion Leggings</item>
+        <item>Saree</item>
+        <item>Jeans</item>
+        <item>Gift</item>
+    </string-array>
+    <string-array name="For">
+        <item>Boy</item>
+        <item>Girl</item>
+    </string-array>
+</resources>
+
