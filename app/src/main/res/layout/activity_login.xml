@@ -68,4 +68,15 @@
         android:textColor="#E8FF00"
         android:textSize="30sp"
         android:textStyle="bold|italic" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="buttonClicked"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="150dp"
+        android:layout_marginEnd="142dp"
+        android:text="Button" />
 </RelativeLayout>

@@ -7,6 +7,21 @@
     android:background="@drawable/back1"
     tools:context=".MainActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+
+            >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
     <Button
         android:id="@+id/submitButton"
         android:layout_width="match_parent"
@@ -30,8 +45,6 @@
         android:background="@drawable/textarea_background"
         android:hint="Enter Price"
         android:padding="8dp"
-
-
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
         android:textSize="18sp" />
@@ -40,7 +53,7 @@
     <EditText
         android:id="@+id/productDescription"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_below="@id/productPrice"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -51,14 +64,13 @@
         android:inputType="text|textMultiLine"
         android:lines="4"
         android:padding="8dp"
-
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF" />
 
     <EditText
         android:id="@+id/productOverview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_below="@id/productDescription"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -79,7 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/textarea_background"
         android:hint="Product Name"
         android:padding="8dp"
@@ -107,7 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:text="Insert Product"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
@@ -201,4 +213,23 @@
         android:padding="7dp"
         android:entries="@array/For"
         />
+    <EditText
+        android:id="@+id/productId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/productFor"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/textarea_background"
+        android:hint="Product Id"
+        android:padding="8dp"
+
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF" />
+
+        </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>

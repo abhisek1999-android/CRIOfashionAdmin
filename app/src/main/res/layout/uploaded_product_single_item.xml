@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/shirtfront"
+        android:id="@+id/productsImage"/>
+
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Item Name"
+    android:layout_toEndOf="@id/productsImage"
+    android:layout_centerVertical="true"
+    android:textSize="25sp"
+    android:id="@+id/itemName"
+    android:layout_marginLeft="10dp"/>
+</RelativeLayout>

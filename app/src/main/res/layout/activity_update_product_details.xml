@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UpdateProductDetails">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40dp"
+        android:id="@+id/itemName"
+        android:text="Item name"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product Id"
+        android:textSize="25dp"
+        android:id="@+id/itemId"
+        android:layout_below="@+id/itemName"
+        android:layout_marginLeft="20dp"
+
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/itemId"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/recyclerViewForColors"
+        />
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/recyclerViewForColors"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/recyclerViewForSizes"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recyclerViewForSizes"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp"
+        android:text="No of item available"
+
+        android:id="@+id/noOfItems"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/noOfItems"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="25sp"
+        android:text="Price"
+
+        android:id="@+id/itemPrice"
+        />
+    <!-- inc fild
+
+    id edittext:incrementField
+    id   button:incrementButton
+
+    -->
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Increment or Decrement item"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/itemPrice"
+        android:layout_marginLeft="20dp"
+        />
+<androidx.cardview.widget.CardView
+    android:layout_width="100dp"
+    android:layout_marginLeft="20dp"
+    android:layout_below="@id/itemPrice"
+    android:layout_height="100dp"
+    android:layout_marginTop="40dp"
+app:cardCornerRadius="10dp"
+    android:id="@+id/incCard"
+    app:cardBackgroundColor="#e4e4e4"
+    app:cardElevation="0dp"
+>
+
+
+   <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+       <EditText
+           android:id="@+id/incrementField"
+           android:layout_width="100dp"
+           android:layout_height="60dp"
+           android:layout_alignParentEnd="true"
+           android:layout_alignParentTop="true"
+           android:layout_marginEnd="0dp"
+           android:layout_marginTop="1dp"
+           android:background="#00000000"
+           android:hint="Increment \nPiece"
+           android:inputType="numberDecimal"
+           android:padding="15dp"
+           android:textAlignment="center"
+           android:textSize="12sp" />
+
+       <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="+"
+            android:textSize="30sp"
+            android:textAllCaps="false"
+            android:layout_below="@id/incrementField"
+            android:id="@+id/incrementButton"
+            android:textColor="#fff"
+            android:background="@color/colorPrimaryDark"/>
+   </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>
+
+
+
+<!--Dec fild
+
+id edittext:decrementField
+    id   button:decrementButton
+
+-->
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+
+        android:layout_toEndOf="@id/incCard"
+        android:layout_below="@id/itemPrice"
+        android:layout_marginLeft="20dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#e4e4e4"
+        app:cardElevation="0dp"
+        >
+
+     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#00000000"
+            android:hint="Decrement \nPieces"
+            android:id="@+id/decrementField"
+            android:inputType="numberDecimal"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:padding="15dp"
+            />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+           android:id="@+id/decrementButton"
+            android:text="-"
+            android:textAlignment="center"
+            android:layout_below="@id/decrementField"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="40sp" />
+         M</RelativeLayout>
+
+</androidx.cardview.widget.CardView>
+
+
+
+    <!-- inc fild price
+
+     id edittext:incrementFieldPrice
+    id   button:incrementButtonPrice
+
+
+    -->
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Increment or Decrement item Price"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/incCard"
+        android:layout_marginLeft="20dp"
+        />
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@id/incCard"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        app:cardCornerRadius="10dp"
+        android:id="@+id/incCardPrice"
+        app:cardBackgroundColor="#e4e4e4"
+        app:cardElevation="0dp"
+        >
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <EditText
+                android:id="@+id/incrementFieldPrice"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="0dp"
+                android:layout_marginTop="1dp"
+                android:background="#00000000"
+                android:hint="Increment \nPrice"
+                android:inputType="numberDecimal"
+                android:padding="15dp"
+                android:textAlignment="center"
+                android:textSize="12sp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="+"
+                android:textSize="30sp"
+                android:textAllCaps="false"
+                android:layout_below="@id/incrementFieldPrice"
+                android:id="@+id/incrementButtonPrice"
+                android:textColor="#fff"
+                android:background="@color/colorPrimaryDark"/>
+        </RelativeLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+    <!-- dec fild price
+
+
+     id edittext:decrementFieldPrice
+    id   button:decrementButtonPrice
+
+
+    -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="100dp"
+        android:layout_toEndOf="@id/incCardPrice"
+        android:layout_below="@id/incCard"
+        android:layout_marginLeft="20dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="#e4e4e4"
+        app:cardElevation="0dp"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="#00000000"
+                android:hint="Decrement \nPrice"
+                android:id="@+id/decrementFieldPrice"
+                android:inputType="numberDecimal"
+                android:textAlignment="center"
+                android:textSize="12sp"
+                android:padding="15dp"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimaryDark"
+                android:id="@+id/decrementButtonPrice"
+                android:text="-"
+                android:textAlignment="center"
+                android:layout_below="@id/decrementFieldPrice"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:textSize="40sp" />
+            </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+<androidx.cardview.widget.CardView
+    android:layout_width="70dp"
+    android:layout_height="70dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentRight="true"
+    android:layout_marginBottom="40dp"
+    android:layout_marginRight="20dp"
+    app:cardCornerRadius="35dp"
+    android:onClick="addColorClicked"
+    app:cardBackgroundColor="@color/colorPrimaryDark">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Add\nColor"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+
+
+
+</androidx.cardview.widget.CardView>
+
+
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+
