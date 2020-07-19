@@ -6,10 +6,67 @@
     android:layout_height="match_parent"
     tools:context=".ColorSizeAddingActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="This is where you have to add color" />
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
 
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Choose a nice Color"
+              android:layout_marginLeft="16dp"
+              android:textSize="20dp"
+              android:id="@+id/chooseColorText"
+              android:layout_marginTop="30dp"/>
+
+          <androidx.cardview.widget.CardView
+              android:layout_width="100dp"
+              android:layout_height="50dp"
+              android:layout_alignParentRight="true"
+              android:layout_marginTop="15dp"
+              android:layout_marginRight="16dp">
+
+              <RelativeLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:id="@+id/colorRelativeLayout"
+
+                  >
+
+
+                  <TextView
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                     android:id="@+id/colorTextCode"
+                      android:layout_centerInParent="true"/>
+
+              </RelativeLayout>
+
+          </androidx.cardview.widget.CardView>
+
+    <com.github.naz013.colorslider.ColorSlider
+        android:id="@+id/color_slider"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="16dp" />
+    <com.github.naz013.colorslider.ColorSlider
+        android:id="@+id/color_slider_gradient_array"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/color_slider"
+        android:layout_marginRight="16dp" />
+
+
+      </RelativeLayout>
+  </ScrollView>
 </RelativeLayout>

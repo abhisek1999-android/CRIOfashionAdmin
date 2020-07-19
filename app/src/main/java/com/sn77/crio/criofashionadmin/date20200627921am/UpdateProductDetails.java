@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -122,7 +123,8 @@ public class UpdateProductDetails extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull ColorsAndSizeViewHolder colorsAndSizeViewHolder, final int i, @NonNull final Colors colors) {
 
                 colorsAndSizeViewHolder.valueTextView.setText(colors.getColor_name());
-                colorsAndSizeViewHolder.valueTextView.setTextColor(Color.parseColor(colors.getColor_code()));
+                colorsAndSizeViewHolder.valueTextView.setTextColor(Color.parseColor("#E4E4E4"));
+                colorsAndSizeViewHolder.radioBackGround.setBackgroundColor(Color.parseColor(colors.getColor_code()));
 
 
 
@@ -382,12 +384,15 @@ public class UpdateProductDetails extends AppCompatActivity {
         RadioButton selectorButton;
         TextView valueTextView;
         View mView;
+        RelativeLayout radioBackGround;
+        //CARDVIEW
         public ColorsAndSizeViewHolder(@NonNull View itemView) {
             super(itemView);
             mView=itemView;
             selectorButton=itemView.findViewById(R.id.selectorButton);
             valueTextView=itemView.findViewById(R.id.valueTextView);
-
+            radioBackGround=itemView.findViewById(R.id.radioBackGround);
+//INS
 
 
         }
