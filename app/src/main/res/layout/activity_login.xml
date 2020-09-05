@@ -4,79 +4,161 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back4"
-    tools:context=".LoginActivity"
-    tools:ignore="ExtraText">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="367dp"
+    tools:ignore="ExtraText"
+    android:layout_centerHorizontal="true">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="299dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextPassword"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/button_background"
-        android:fontFamily="serif"
+        android:layout_centerInParent="true"
+        android:background="@drawable/image_background"
         android:padding="15dp"
-        android:text="Login"
-        android:textAllCaps="true"
-        android:textSize="18sp"
-        android:textStyle="bold|italic" />
+        android:paddingBottom="70dp">
 
-    <EditText
-        android:id="@+id/editTextPassword"
-        android:layout_width="367dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextUserId"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/textarea_background"
-        android:ems="10"
-        android:hint="Enter Your Password"
-        android:inputType="textPersonName"
-        android:padding="15dp"
+        <Button
+            android:id="@+id/button"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextPassword"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/upload_background_new"
+            android:fontFamily="sans-serif"
+            android:padding="15dp"
+            android:text="Login"
+            android:textAllCaps="true"
+            android:textColor="@color/cardview_light_background"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textColorHint="@color/common_google_signin_btn_text_dark_default" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/editTextPassword"
+            android:layout_below="@id/editTextUserId"
+            android:layout_centerHorizontal="true"
+            app:hintEnabled="false"
+            app:passwordToggleEnabled="true"
+            android:layout_marginTop="15dp"
+            app:passwordToggleTint="#fff"
+            android:background="@drawable/textarea_background">
 
-    <EditText
-        android:id="@+id/editTextUserId"
-        android:layout_width="367dp"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="240dp"
-        android:background="@drawable/textarea_background"
-        android:ems="10"
-        android:hint="Enter Your UserId"
-        android:inputType="textPersonName"
-        android:textAlignment="textStart"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textColorHighlight="#FF0000"
-        android:textColorHint="@color/common_google_signin_btn_text_dark_default" />
+        <com.google.android.material.textfield.TextInputEditText
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="243dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="Authenticator Login"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textColor="#E8FF00"
-        android:textSize="30sp"
-        android:textStyle="bold|italic" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint=" Password"
+            android:inputType="textPassword"
+            android:drawablePadding="7dp"
+            android:padding="10dp"
+            android:background="#00000000"
+            android:drawableStart="@drawable/ic_baseline_lock_24"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:textColorHint="@color/common_google_signin_btn_text_dark_default" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:onClick="buttonClicked"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="150dp"
-        android:layout_marginEnd="142dp"
-        android:text="Button" />
+
+
+
+  <!--     user name      -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editTextUserId"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView11"
+            android:layout_centerHorizontal="true"
+            app:hintEnabled="false"
+            android:textColorHighlight="#FF0000"
+            android:background="@drawable/textarea_background"
+            android:textColorHint="@color/common_google_signin_btn_text_dark_default">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_baseline_person_24"
+            android:drawablePadding="7dp"
+            android:ems="10"
+            android:fontFamily="sans-serif"
+            android:hint="Enter Your UserId"
+            android:inputType="textPersonName"
+            android:background="#00000000"
+            android:textColorHint="#fff"
+            android:padding="10dp"
+            android:textAlignment="textStart"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+             />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/forgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:text="@string/forgot_password"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/beSeller"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="200dp"
+            android:layout_marginStart="45dp"
+            android:layout_marginTop="16dp"
+            android:layout_toEndOf="@+id/forgotPassword"
+            android:fontFamily="sans-serif"
+            android:text="@string/be_seller"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+     android:layout_below="@+id/imageView"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif"
+            android:text="Seller  Login"
+            android:textAlignment="viewStart"
+            android:textAllCaps="false"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true"
+
+            android:layout_marginBottom="20dp"
+            android:fontFamily="sans-serif"
+            android:text="We Are Happy To Have You !!"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:textSize="18sp" />
+
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="110dp"
+            android:layout_height="88dp"
+            android:layout_centerHorizontal="true"
+            app:srcCompat="@drawable/logo" />   </RelativeLayout>
+
+
 </RelativeLayout>

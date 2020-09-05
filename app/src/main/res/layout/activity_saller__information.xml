@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Saller_Information">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <EditText
+                android:id="@+id/companyName"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/changePassword"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/image_background"
+                android:padding="5dp"
+                android:text="name"
+                android:textColor="@color/common_google_signin_btn_text_light_pressed" />
+
+            <EditText
+                android:id="@+id/companyPhoneNumber"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyName"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/image_background"
+                android:padding="5dp"
+                android:text="name"
+                android:textColor="@color/common_google_signin_btn_text_light_pressed" />
+
+            <EditText
+                android:id="@+id/companyGSTNumber"
+                android:layout_width="300dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyPhoneNumber"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/image_background"
+                android:padding="5dp"
+                android:text="name"
+                android:textColor="@color/common_google_signin_btn_text_light_pressed" />
+
+            <EditText
+                android:id="@+id/sizeChartName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textView10"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="170dp"
+                android:layout_marginTop="10dp"
+                android:hint="Chart Name"
+                android:textColor="#000000" />
+
+            <ImageButton
+                android:id="@+id/changeCompanyNameId"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/changePassword"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@id/companyName"
+                android:background="#00000000"
+                android:onClick="changeCompnayName"
+                android:src="@drawable/ic_baseline_edit_24" />
+
+
+            <ImageButton
+                android:id="@+id/changeCompanyNameIdToDb"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyEmail"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@id/companyName"
+                android:background="@color/colorPrimary"
+                android:onClick="changeCompnayNameToDb"
+                android:src="@drawable/ic_baseline_done_24"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/changeCompanyPhoneId"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyName"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@id/companyPhoneNumber"
+                android:background="#00000000"
+                android:onClick="changeCompnayPhoneNumber"
+                android:src="@drawable/ic_baseline_edit_24" />
+
+            <ImageButton
+                android:id="@+id/changeCompanyPhoneIdToDb"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyName"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@id/companyPhoneNumber"
+                android:background="@color/colorPrimaryDark"
+                android:onClick="changeCompnayPhoneNumberToDb"
+                android:src="@drawable/ic_baseline_done_24"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/changeCompanyGstId"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyPhoneNumber"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@id/companyGSTNumber"
+                android:background="#00000000"
+                android:onClick="changeCompnayGstNumber"
+                android:src="@drawable/ic_baseline_edit_24" />
+
+            <ImageButton
+                android:id="@+id/changeCompanyGstIdToDb"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/companyPhoneNumber"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@id/companyGSTNumber"
+                android:background="@color/colorPrimaryDark"
+                android:onClick="changeCompnayGstNumberToDb"
+                android:src="@drawable/ic_baseline_done_24"
+                android:visibility="gone" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_marginTop="50dp"
+                android:id="@+id/user_image"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/font1" />
+
+            <RelativeLayout
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_below="@+id/sizeChartChoosingRecyclerView"
+                android:layout_alignParentRight="true">
+
+                <ImageView
+                    android:id="@+id/sizeChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_baseline_image_search_24" />
+
+                <Button
+
+                    android:id="@+id/size_chart_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/sizeChart"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/upload_background_new"
+                    android:fontFamily="sans-serif"
+                    android:onClick="uploadImage"
+                    android:text="Upload"
+                    android:textAllCaps="false"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/companyId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/user_image"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
+                android:text="company_id"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/companyEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/companyId"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="20dp"
+                android:shadowColor="#e4e4e4"
+                android:shadowRadius="4"
+                android:text="abcd@gmail.com"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:id="@+id/changePassword"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/companyEmail"
+                app:cardElevation="0dp"
+                android:layout_centerHorizontal="true"
+                android:padding="10dp"
+                app:cardBackgroundColor="@color/colorAccent"
+                app:cardCornerRadius="30dp"
+                android:onClick="changePassword"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="8dp"
+                        android:src="@drawable/ic_baseline_lock_24"/>
+
+                    <TextView
+
+                        android:padding="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="#fff"
+                        android:layout_marginLeft="-10dp"
+                        android:textStyle="bold"
+                        android:text="Change Password"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/sizeChartChoosingRecyclerView"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="21dp"
+                android:text="Add New Size Charts: "
+                android:textColor="#000000"
+                android:textSize="17dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sizeChartChoosingRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/companyGSTNumber"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:padding="5dp" />
+
+
+
+
+          <!--  <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/changePassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+
+                android:layout_marginLeft="30dp"
+
+                android:src="@drawable/ic_baseline_https_24" />-->
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

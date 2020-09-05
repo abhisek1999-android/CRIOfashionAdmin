@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">CRIOfashionAdmin</string>
+    <string name="app_name">CriO Seller Hub</string>
+    <string name="forgot_password"><u>Forgot Password</u></string>
+    <string name="be_seller"><u>Be A Seller</u></string>
     <string-array name="Types">
         <item>QR Shirt</item>
         <item>Fan Shirt</item>

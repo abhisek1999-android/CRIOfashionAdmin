@@ -9,13 +9,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ColorSizeAddingActivity"></activity>
+        <activity android:name=".JewelleryMoreDetails"></activity>
+        <activity android:name=".ReturnedItemActivity" />
+        <activity android:name=".OrderedItemActivity" />
+        <activity android:name=".Jewellery" />
+        <activity android:name=".Saller_Information" />
+        <activity android:name=".SelectItemActivity" />
+        <activity android:name=".others_details" />
+        <activity android:name=".ColorSizeAddingActivity" />
         <activity
             android:name=".UpdateProductDetails"
             android:parentActivityName=".Inventory_Activity" />
         <activity android:name=".Inventory_Activity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" /> <!-- main activity -->
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>

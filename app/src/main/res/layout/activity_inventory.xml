@@ -6,12 +6,209 @@
     android:layout_height="match_parent"
     tools:context=".Inventory_Activity">
 
+    <RelativeLayout
+        android:id="@+id/usersDashBoard"
+        android:layout_width="wrap_content"
+        android:layout_height="110dp"
+        android:layout_centerHorizontal="true">
+
+
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:id="@+id/creditPointCard"
+
+
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="5dp"
+            app:cardBackgroundColor="@color/button_dark_color"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/creditPoint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:layout_centerInParent="true"
+                    android:textColor="#fff"
+                    android:textSize="30sp"/>
+
+                <TextView
+                    android:layout_marginTop="-5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Credit Point"
+                    android:textColor="#fff"
+                    android:layout_below="@id/creditPoint"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_toEndOf="@id/creditPointCard"
+            android:layout_marginLeft="15dp"
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="5dp"
+            app:cardBackgroundColor="@color/button_dark_color"
+            android:id="@+id/deliveredItemCard">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/deliveredItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:layout_centerInParent="true"
+                    android:textColor="#fff"
+                    android:textSize="30sp"/>
+
+                <TextView
+                    android:textColor="#fff"
+                    android:layout_marginTop="-5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delivered Item"
+                    android:layout_below="@id/deliveredItem"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:id="@+id/returnItemCard"
+            android:layout_toEndOf="@id/deliveredItemCard"
+            android:layout_marginLeft="10dp"
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="5dp"
+            app:cardBackgroundColor="@color/button_dark_color">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/returnItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#fff"
+                    android:layout_centerInParent="true"
+                    android:textSize="30sp"/>
+
+                <TextView
+                    android:layout_marginTop="-5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Return Item"
+                    android:textColor="#fff"
+                    android:layout_below="@id/returnItem"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:id="@+id/nextPaymentDateCard"
+            android:layout_toEndOf="@id/returnItemCard"
+            android:layout_marginLeft="10dp"
+            app:cardCornerRadius="10dp"
+            android:layout_marginTop="5dp"
+            app:cardBackgroundColor="@color/button_dark_color"
+            >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/nextPaymentDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="dd/mm/yy"
+                    android:layout_centerInParent="true"
+                    android:textColor="#fff"
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:textColor="#fff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Due Date"
+                    android:layout_below="@id/nextPaymentDate"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+
+    </RelativeLayout>
+
 <androidx.recyclerview.widget.RecyclerView
+    android:layout_below="@id/usersDashBoard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/uploaded_item_list"
     android:orientation="vertical"
+    android:background="#e4e4e4"
     android:layout_above="@id/addProductsItem"/>
+
+    <RelativeLayout
+        android:id="@+id/ownProgressDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+    <ProgressBar
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+       /></RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/notFoundLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/notFoundImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_not_found"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notFoundImage"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:text="NO ITEM FOUND"/>
+
+    </RelativeLayout>
 
     <Button
         android:layout_width="match_parent"

@@ -2,28 +2,44 @@ package com.sn77.crio.criofashionadmin.date20200627921am;
 
 public class SizesItems {
 
-   Long no_of_pices;//this should be chnaged to the database spalling incorrect
-   Long price;
+   Long pieces;//this should be chnaged to the database spalling incorrect
+   Long max_price;
+    Long min_price;
     String size;
 
     public SizesItems(){
 
     }
 
-    public Long getNo_of_pices() {
-        return no_of_pices;
+    public SizesItems(Long pieces, Long max_price, Long min_price, String size) {
+        this.pieces = pieces;
+        this.max_price = max_price;
+        this.min_price = min_price;
+        this.size = size;
     }
 
-    public void setNo_of_pices(Long no_of_pices) {
-        this.no_of_pices = no_of_pices;
+    public Long getPieces() {
+        return pieces;
     }
 
-    public Long getPrice() {
-        return price;
+    public void setPieces(Long pieces) {
+        this.pieces = pieces;
     }
 
-    public void setPrice(Long price) {
-        this.price = price;
+    public Long getMax_price() {
+        return max_price;
+    }
+
+    public void setMax_price(Long max_price) {
+        this.max_price = max_price;
+    }
+
+    public Long getMin_price() {
+        return min_price;
+    }
+
+    public void setMin_price(Long min_price) {
+        this.min_price = min_price;
     }
 
     public String getSize() {
@@ -31,12 +47,6 @@ public class SizesItems {
     }
 
     public void setSize(String size) {
-        this.size = size;
-    }
-
-    public SizesItems(Long no_of_pices, Long price, String size) {
-        this.no_of_pices = no_of_pices;
-        this.price = price;
         this.size = size;
     }
 }

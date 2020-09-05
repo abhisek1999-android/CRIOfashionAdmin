@@ -49,7 +49,7 @@ public class UpdateProductDetails extends AppCompatActivity {
     private TextView itemName,itemId;
     private RecyclerView colorRecyclerView;
     private RecyclerView sizeRecyclerView;
-    String itemIdIntent,colorNameSelector,sizeNameSelector,firstColor; //colorSelector is for selecting the color form the radio buttons and sizeNameSelector for size
+    String itemIdIntent,colorNameSelector,sizeNameSelector,firstColor,childItem,parentCategory; //colorSelector is for selecting the color form the radio buttons and sizeNameSelector for size
     int lastSelectedPositionColor = 0;
     int lastSelectedPositionSize = -1;
    TextView no_of_items_Text,itemPrice;
@@ -87,7 +87,10 @@ public class UpdateProductDetails extends AppCompatActivity {
         animation= AnimationUtils.loadAnimation(UpdateProductDetails.this,R.anim.slide_in_left);
         itemPrice=findViewById(R.id.itemPrice);
         itemName.setText(getIntent().getStringExtra("itemName"));
+        childItem=getIntent().getStringExtra("childCategory");
         itemIdIntent=getIntent().getStringExtra("itemId");
+        parentCategory=getIntent().getStringExtra("parentCategory");
+
         itemId.setText(itemIdIntent);
         colorArrayList=new ArrayList<>();
 
@@ -235,8 +238,8 @@ public class UpdateProductDetails extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 SizesItems sizesItems=dataSnapshot.getValue(SizesItems.class);
 
-                no_of_pieces=sizesItems.getNo_of_pices();
-                priceItem=sizesItems.getPrice();
+                no_of_pieces=sizesItems.getPieces();
+                priceItem=sizesItems.getMax_price();
                 no_of_items_Text.setText("No of item available: "+no_of_pieces.toString());
                 itemPrice.setText("Price: "+priceItem.toString());
 // this is for increment items
@@ -244,20 +247,29 @@ public class UpdateProductDetails extends AppCompatActivity {
                 incrementButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        long numberOfitem= Long.parseLong(incrementField.getText().toString());
+
+                        if (!incrementField.getText().toString().equals("")){
+
+                            long numberOfitem= Long.parseLong(incrementField.getText().toString());
 
 
 
-                        productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("no_of_pices")
-                                .setValue(numberOfitem+no_of_pieces).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
+                                    .setValue(numberOfitem+no_of_pieces).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
 
-                                Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
-                                incrementField.setText("");
+                                    Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                    incrementField.setText("");
 
-                            }
-                        });
+                                }
+                            });
+
+                        }else{
+
+                            Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
 
@@ -266,23 +278,33 @@ public class UpdateProductDetails extends AppCompatActivity {
                 decrementButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        long givenNumberOfitem= Long.parseLong(decrementField.getText().toString());
+
+                        if (!decrementField.getText().toString().equals("")){
+
+                            long givenNumberOfitem= Long.parseLong(decrementField.getText().toString());
 
 
-                        if (no_of_pieces>givenNumberOfitem){
-                        productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("no_of_pices")
-                                .setValue(no_of_pieces-givenNumberOfitem).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            if (no_of_pieces>givenNumberOfitem){
+                                productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
+                                        .setValue(no_of_pieces-givenNumberOfitem).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
 
-                                Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
-                                decrementField.setText("");
+                                        Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                        decrementField.setText("");
 
+                                    }
+                                });
+                            }else {
+
+                                Toast.makeText(UpdateProductDetails.this, "Only "+no_of_pieces+" left", Toast.LENGTH_SHORT).show();
                             }
-                        });
-                    }else {
 
-                            Toast.makeText(UpdateProductDetails.this, "Only "+no_of_pieces+" left", Toast.LENGTH_SHORT).show();
+
+
+                        }else{
+
+                            Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -294,20 +316,32 @@ public class UpdateProductDetails extends AppCompatActivity {
                 incrementButtonPrice.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        long givenPrice= Long.parseLong(incrementFieldPrice.getText().toString());
+
+
+                        if (!incrementFieldPrice.getText().toString().equals("")){
+
+
+                            long givenPrice= Long.parseLong(incrementFieldPrice.getText().toString());
 
 
 
-                        productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("price")
-                                .setValue(givenPrice+priceItem).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("max_price")
+                                    .setValue(givenPrice+priceItem).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
 
-                                Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
-                                incrementFieldPrice.setText("");
+                                    Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                    incrementFieldPrice.setText("");
 
-                            }
-                        });
+                                }
+                            });
+
+
+                        }else{
+
+                            Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
 
@@ -316,24 +350,33 @@ public class UpdateProductDetails extends AppCompatActivity {
                 decrementButtonPrice.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        long givenPrice= Long.parseLong(decrementFieldPrice.getText().toString());
 
 
 
-                        if (priceItem>givenPrice){
-                            productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("price")
-                                    .setValue(priceItem-givenPrice).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                        if (!decrementFieldPrice.getText().toString().equals("")){
 
-                                    Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
-                                    decrementFieldPrice.setText("");
 
-                                }
-                            });
-                        }else {
+                            long givenPrice= Long.parseLong(decrementFieldPrice.getText().toString());
+                            if (priceItem>givenPrice){
+                                productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("max_price")
+                                        .setValue(priceItem-givenPrice).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
 
-                            Toast.makeText(UpdateProductDetails.this, "Value must be lesser than"+priceItem, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                        decrementFieldPrice.setText("");
+
+                                    }
+                                });
+                            }else {
+
+                                Toast.makeText(UpdateProductDetails.this, "Value must be lesser than"+priceItem, Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        }else{
+
+                            Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -371,9 +414,32 @@ public class UpdateProductDetails extends AppCompatActivity {
 
     public void addColorClicked(View view) {
 
-        Intent intent=new Intent(getApplicationContext(),ColorSizeAddingActivity.class);
-        startActivity(intent);
 
+        if (parentCategory.equals("Jewellery")){
+
+            Intent intent=new Intent(getApplicationContext(),Jewellery.class);
+            intent.putExtra("itemId",itemIdIntent);
+            intent.putExtra("childCategory",childItem);
+            intent.putExtra("parentCategory",parentCategory);
+            startActivity(intent);
+
+        }
+        else if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories"))
+        {
+            Intent intent=new Intent(getApplicationContext(),others_details.class);
+            intent.putExtra("itemId",itemIdIntent);
+            intent.putExtra("childCategory",childItem);
+            intent.putExtra("parentCategory",parentCategory);
+            startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
+            intent.putExtra("itemId", itemIdIntent);
+            intent.putExtra("childCategory", childItem);
+            intent.putExtra("parentCategory",parentCategory);
+
+            startActivity(intent);
+        }
 
 
     }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/back1"
     tools:context=".MainActivity">
 
     <ScrollView
@@ -23,19 +22,21 @@
             android:layout_height="match_parent"
             >
 
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/productDescription"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="361dp"
-        android:background="@drawable/button_background"
-        android:onClick="prodectAdd"
-        android:text="submit" />
+            <Button
+                android:id="@+id/submitButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
 
-    <EditText
+                android:layout_below="@+id/packageWeight"
+               android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+
+                android:background="@drawable/button_background_new"
+                android:text="submit"
+                android:textColor="@color/common_google_signin_btn_text_dark_pressed" />
+  <!--  <EditText
         android:id="@+id/productPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,48 +44,99 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/textarea_background"
+
         android:hint="Enter Price"
         android:padding="8dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF"
-        android:textSize="18sp" />
 
+        android:textSize="18sp" />-->
+            <EditText
+                android:id="@+id/shortDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/companyName"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="12dp"
+                android:hint="Short Description"
+                android:lines="1"
+                android:padding="15dp"/>
 
-    <EditText
+            <EditText
         android:id="@+id/productDescription"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_below="@id/productPrice"
+        android:layout_below="@id/shortDescription"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/textarea_background"
-        android:gravity="top"
         android:hint="Product Description"
         android:inputType="text|textMultiLine"
         android:lines="4"
-        android:padding="8dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF" />
+        android:padding="8dp"/>
+            <EditText
+                android:id="@+id/productFeature"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@id/productDescription"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="12dp"
+                android:hint="Product Features"
+                android:inputType="text|textMultiLine"
+                android:lines="8"
+                android:padding="8dp"/>
 
-    <EditText
+
+            <EditText
         android:id="@+id/productOverview"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_below="@id/productDescription"
+        android:layout_height="60dp"
+        android:layout_below="@id/productFeature"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:gravity="top"
         android:hint="Product Overview"
         android:inputType="text|textMultiLine"
-        android:lines="4"
+        android:lines="2"
         android:padding="8dp"
-        android:background="@drawable/textarea_background"
-
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF" />
+        android:layout_marginTop="10dp"
+        />
+            <EditText
+                android:id="@+id/productMaterial"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_below="@id/productOverview"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:hint="Product Matearial"
+                android:inputType="text|textMultiLine"
+                android:lines="1"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
+                />
+            <EditText
+                android:id="@+id/materialWight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/productMaterial"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:hint="Material Weight"
+                android:layout_centerHorizontal="true"
+                android:padding="15dp"
+                android:layout_marginRight="30dp"/>
+            <EditText
+                android:id="@+id/careInstruction"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_below="@id/materialWight"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:hint="Care Instruction"
+                android:inputType="text|textMultiLine"
+                android:lines="2"
+                android:padding="8dp"
+                android:layout_marginTop="10dp"
+                />
 
     <EditText
         android:id="@+id/productName"
@@ -92,13 +144,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/textarea_background"
+        android:layout_marginTop="8dp"
         android:hint="Product Name"
-        android:padding="8dp"
-
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF" />
+        android:padding="15dp"
+        android:layout_below="@+id/productId"
+        />
 
     <EditText
         android:id="@+id/companyName"
@@ -108,12 +158,9 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/textarea_background"
         android:hint="Company Name"
-        android:padding="8dp"
-
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF" />
+        android:padding="15dp"
+        android:gravity="top"/>
 
     <TextView
         android:id="@+id/textView2"
@@ -123,11 +170,10 @@
         android:layout_marginTop="5dp"
         android:text="Insert Product"
         android:textAlignment="center"
-        android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold|italic" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+  <!--  <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/fontImage"
         android:layout_width="100dp"
         android:layout_height="150dp"
@@ -188,47 +234,103 @@
         android:text="Orginal Image"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="20sp"
-        android:textStyle="italic" />
+        android:textStyle="italic" />-->
 
-    <Spinner
+    <EditText
         android:id="@+id/productType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/productOverview"
+        android:layout_below="@id/careInstruction"
         android:layout_marginTop="12dp"
-        android:background="@drawable/textarea_background"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:padding="7dp"
-        android:entries="@array/Types">
-    </Spinner>
+        android:padding="15dp"
+        android:hint="Category"
+       >
+    </EditText>
     <Spinner
         android:id="@+id/productFor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/productType"
         android:layout_marginTop="12dp"
-        android:background="@drawable/textarea_background"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:padding="7dp"
+        android:padding="15dp"
         android:entries="@array/For"
         />
-    <EditText
-        android:id="@+id/productId"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/productFor"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/textarea_background"
-        android:hint="Product Id"
-        android:padding="8dp"
 
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF" />
+            <!--First wrap edit text with com.google.android.material.textfield.TextInputLayout,
+            place id and below id etc to this layout and then make EditText to
+             com.google.android.material.textfield.TextInputEditText
 
+            -->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/productId"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="25dp"
+                android:layout_below="@id/textView2"
+                app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Product Id"
+                android:padding="15dp"
+                android:inputType="text"
+                android:digits="0123456789*,qwertzuiopasdfghjklyxcvbnm"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+            <EditText
+                android:id="@+id/packageWidth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="8dp"
+                android:hint="Package Width"
+                android:padding="15dp"
+                android:layout_below="@+id/productFor"
+                />
+
+            <EditText
+                android:id="@+id/packageHeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:hint="Package Height"
+                android:layout_marginTop="10dp"
+                android:padding="15dp"
+                android:layout_below="@+id/packageWidth"
+                />
+            <EditText
+                android:id="@+id/packageWeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:hint="Package Weight"
+                android:padding="15dp"
+                android:layout_below="@+id/packageDepth"
+                />
+            <EditText
+                android:id="@+id/packageDepth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:hint="Package Depth"
+                android:padding="15dp"
+                android:layout_below="@+id/packageHeight"
+                />
         </RelativeLayout>
         </LinearLayout>
     </ScrollView>

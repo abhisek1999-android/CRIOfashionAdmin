@@ -13,28 +13,52 @@
       <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="match_parent">
-
           <TextView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="Choose a nice Color"
-              android:layout_marginLeft="16dp"
-              android:textSize="20dp"
+              android:id="@+id/textview9"
+              android:layout_centerHorizontal="true"
+              android:layout_marginLeft="15dp"
+              android:text="Product Details"
+              android:textSize="30dp"
+              android:layout_marginTop="10dp"
+              />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/copyId"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="15dp"
+              android:text="Product Id : AB000CD"
+              android:textSize="25dp"
+              android:layout_marginTop="10dp"
+              android:layout_below="@+id/textview9"
+              />
+
+          <TextView
               android:id="@+id/chooseColorText"
-              android:layout_marginTop="30dp"/>
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/copyId"
+              android:layout_marginLeft="16dp"
+              android:layout_marginTop="27dp"
+              android:text="Choose Color"
+              android:textSize="20dp" />
 
           <androidx.cardview.widget.CardView
               android:layout_width="100dp"
               android:layout_height="50dp"
               android:layout_alignParentRight="true"
               android:layout_marginTop="15dp"
-              android:layout_marginRight="16dp">
+              android:layout_marginRight="16dp"
+              android:layout_below="@+id/copyId"
+              android:background="@drawable/button_background">
 
               <RelativeLayout
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:id="@+id/colorRelativeLayout"
-
+                  android:padding="20dp"
                   >
 
 
@@ -48,15 +72,16 @@
 
           </androidx.cardview.widget.CardView>
 
-    <com.github.naz013.colorslider.ColorSlider
-        android:id="@+id/color_slider"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginRight="16dp" />
-    <com.github.naz013.colorslider.ColorSlider
+          <com.github.naz013.colorslider.ColorSlider
+              android:id="@+id/color_slider"
+              android:layout_width="match_parent"
+              android:layout_height="36dp"
+              android:layout_below="@+id/chooseColorText"
+              android:layout_gravity="center_vertical"
+              android:layout_marginLeft="16dp"
+              android:layout_marginRight="16dp"
+              android:layout_marginTop="28dp" />
+          <com.github.naz013.colorslider.ColorSlider
         android:id="@+id/color_slider_gradient_array"
         android:layout_width="match_parent"
         android:layout_height="36dp"
@@ -65,7 +90,554 @@
         android:layout_marginTop="8dp"
         android:layout_below="@id/color_slider"
         android:layout_marginRight="16dp" />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="15dp"
+              android:layout_marginTop="20dp"
+              android:text="Product's Colour Name:"
+              android:layout_below="@+id/color_slider_gradient_array"
+              android:id="@+id/textView0"
+              android:textSize="20dp"/>
+          <EditText
+              android:id="@+id/colorName"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/textView0"
+         android:layout_marginLeft="16dp"
+              android:layout_marginRight="30dp"
+              android:padding="10dp"
+              android:background="@drawable/button_background"/>
+          <TextView
+              android:id="@+id/textView22"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_below="@+id/colorName"
+              android:layout_marginLeft="15dp"
+              android:text="Warranty Description: "
+              android:textSize="20dp"
+              android:layout_marginTop="5dp"/>
 
+
+
+          <EditText
+              android:id="@+id/productWarranty"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/textView22"
+              android:background="@drawable/button_background"
+              android:layout_marginLeft="16dp"
+              android:layout_marginRight="30dp"
+              android:padding="10dp"
+        />
+
+
+          <!---->
+          <RelativeLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/productWarranty"
+              android:id="@+id/sizeRelativeLayout"
+              >
+              <TextView
+                  android:id="@+id/textView"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_alignParentLeft="true"
+                  android:layout_marginLeft="15dp"
+                  android:layout_marginTop="5dp"
+                  android:text="Package Includes: "
+                  android:textSize="20dp"
+                  tools:ignore="UnknownId" />
+              <EditText
+                  android:id="@+id/packageIncludes"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@id/textView"
+             android:layout_marginLeft="16dp"
+                  android:background="@drawable/button_background"
+                  android:padding="10dp"
+                  android:layout_marginRight="30dp"/>
+          <TextView
+              android:id="@+id/textview6"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_below="@+id/packageIncludes"
+             android:layout_marginLeft="20dp"
+              android:layout_marginTop="-2dp"
+              android:padding="10dp"
+              android:text="Sizes"
+              android:textSize="20dp"/>
+
+          <TextView
+              android:layout_width="70dp"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="20dp"
+              android:text="S"
+              android:padding="10dp"
+              android:layout_below="@+id/textview6"
+              android:id="@+id/textview7"
+              android:textAlignment="center"
+              android:layout_marginTop="30dp"
+              android:background="@drawable/button_background"
+              android:textSize="20dp"/>
+          <TextView
+              android:layout_width="70dp"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="5dp"
+              android:text="M"
+              android:padding="10dp"
+              android:background="@drawable/button_background"
+              android:layout_below="@+id/textview7"
+              android:textAlignment="center"
+              android:id="@+id/textview8"
+              android:textSize="20dp"/>
+          <TextView
+              android:layout_width="70dp"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="5dp"
+              android:text="L"
+              android:padding="10dp"
+              android:background="@drawable/button_background"
+              android:layout_below="@+id/textview8"
+              android:textAlignment="center"
+              android:id="@+id/textview10"
+              android:textSize="20dp"/>
+          <TextView
+              android:layout_width="70dp"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="5dp"
+              android:text="XL"
+              android:textAlignment="center"
+              android:padding="10dp"
+              android:background="@drawable/button_background"
+              android:layout_below="@+id/textview10"
+              android:id="@+id/textview11"
+              android:textSize="20dp"/>
+          <TextView
+              android:layout_width="70dp"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="20dp"
+              android:layout_marginTop="5dp"
+              android:text="XXL"
+              android:textAlignment="center"
+              android:padding="10dp"
+              android:background="@drawable/button_background"
+              android:layout_below="@+id/textview11"
+              android:id="@+id/textview12"
+              android:textSize="20dp"/>
+
+              <TextView
+                  android:id="@+id/textview4"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_below="@+id/packageIncludes"
+                  android:layout_marginLeft="150dp"
+                  android:layout_marginRight="50dp"
+                  android:layout_marginStart="64dp"
+                  android:layout_marginTop="-2dp"
+                  android:layout_toEndOf="@+id/textview6"
+                  android:padding="10dp"
+                  android:text="Price"
+                  android:textSize="20dp"
+                  tools:ignore="NotSibling" />
+
+              <TextView
+              android:id="@+id/textview13"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/textview4"
+              android:layout_marginLeft="130dp"
+              android:text="Max"
+              android:layout_marginRight="50dp"
+              android:textSize="20dp"/>
+
+          <EditText
+              android:id="@+id/b2cSPrice"
+              android:layout_width="70dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/textview13"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginStart="22dp"
+              android:layout_marginTop="3dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:inputType="numberDecimal"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2cMPrice"
+              android:layout_width="70dp"
+              android:layout_height="46dp"
+              android:layout_below="@+id/b2cSPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginStart="22dp"
+              android:layout_marginTop="5dp"
+              android:inputType="numberDecimal"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2cLPrice"
+              android:layout_width="70dp"
+              android:layout_height="46dp"
+              android:layout_below="@+id/b2cMPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginStart="22dp"
+              android:layout_marginTop="5dp"
+              android:inputType="numberDecimal"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2cXLPrice"
+              android:layout_width="70dp"
+              android:layout_height="46dp"
+              android:layout_below="@+id/b2cLPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginStart="22dp"
+              android:layout_marginTop="5dp"
+              android:inputType="numberDecimal"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2cXXLPrice"
+              android:layout_width="70dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/b2cXLPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:layout_marginStart="22dp"
+              android:inputType="numberDecimal"
+              android:layout_marginTop="5dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+
+
+          <TextView
+              android:id="@+id/textview14"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/textview4"
+              android:layout_marginRight="50dp"
+              android:layout_marginStart="0dp"
+              android:layout_toEndOf="@+id/textview13"
+              android:text="Min"
+              android:textSize="20dp"/>
+
+          <EditText
+              android:id="@+id/b2bSPrice"
+              android:layout_width="70dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/textview14"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:inputType="numberDecimal"
+              android:layout_marginTop="3dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2bMPrice"
+              android:layout_width="70dp"
+              android:layout_height="46dp"
+              android:layout_below="@+id/b2bSPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:inputType="numberDecimal"
+              android:layout_marginTop="5dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2bLPrice"
+              android:layout_width="70dp"
+              android:layout_height="46dp"
+              android:layout_below="@+id/b2bMPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:inputType="numberDecimal"
+              android:layout_marginTop="5dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2bXLPrice"
+              android:layout_width="70dp"
+              android:layout_height="46dp"
+              android:layout_below="@+id/b2bLPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:inputType="numberDecimal"
+              android:layout_marginTop="5dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+          <EditText
+              android:id="@+id/b2bXXLPrice"
+              android:layout_width="70dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/b2bXLPrice"
+              android:layout_marginLeft="110dp"
+              android:layout_marginRight="30dp"
+              android:inputType="numberDecimal"
+              android:layout_marginTop="5dp"
+              android:layout_toEndOf="@+id/textview7"
+              android:background="@drawable/button_background"/>
+
+              <TextView
+                  android:id="@+id/textview5"
+                  android:layout_width="138dp"
+                  android:layout_height="wrap_content"
+                  android:layout_alignEnd="@+id/packageIncludes"
+
+                  android:layout_alignParentRight="true"
+
+                  android:layout_below="@+id/packageIncludes"
+                  android:layout_marginBottom="15dp"
+                  android:layout_marginStart="55dp"
+                  android:layout_toEndOf="@+id/textview4"
+                  android:gravity="center"
+                  android:padding="10dp"
+                  android:text="Pieces"
+                  android:textSize="20dp" />
+
+              <EditText
+              android:id="@+id/sInventory"
+              android:layout_width="80dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/textview14"
+              android:layout_marginStart="1dp"
+              android:inputType="numberDecimal"
+              android:layout_toEndOf="@+id/b2bSPrice"
+              android:background="@drawable/button_background" />
+          <EditText
+          android:id="@+id/mInventory"
+          android:layout_width="80dp"
+          android:layout_height="48dp"
+          android:layout_below="@+id/sInventory"
+          android:layout_marginStart="1dp"
+          android:layout_marginTop="5dp"
+              android:inputType="numberDecimal"
+          android:layout_toEndOf="@+id/b2bSPrice"
+          android:background="@drawable/button_background" />
+          <EditText
+              android:id="@+id/lInventory"
+              android:layout_width="80dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/mInventory"
+              android:layout_marginStart="1dp"
+              android:layout_marginTop="5dp"
+              android:inputType="numberDecimal"
+              android:layout_toEndOf="@+id/b2bSPrice"
+              android:background="@drawable/button_background" />
+          <EditText
+              android:id="@+id/xlInventory"
+              android:layout_width="80dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/lInventory"
+              android:layout_marginStart="1dp"
+              android:layout_marginTop="5dp"
+              android:inputType="numberDecimal"
+              android:layout_toEndOf="@+id/b2bSPrice"
+              android:background="@drawable/button_background" />
+          <EditText
+              android:id="@+id/xxlInventory"
+              android:layout_width="80dp"
+              android:layout_height="48dp"
+              android:layout_below="@+id/xlInventory"
+              android:layout_marginStart="1dp"
+              android:layout_marginTop="5dp"
+              android:layout_toEndOf="@+id/b2bSPrice"
+              android:inputType="numberDecimal"
+              android:background="@drawable/button_background" />
+
+
+
+      </RelativeLayout>
+
+          <ImageView
+              android:id="@+id/Image1"
+              android:layout_width="100dp"
+              android:layout_height="150dp"
+              android:layout_alignParentLeft="true"
+              android:layout_below="@+id/sizeRelativeLayout"
+              android:layout_marginLeft="10dp"
+              android:src="@drawable/ic_baseline_account_box_24" />
+
+          <TextView
+              android:id="@+id/textView3"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/Image1"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="25dp"
+              android:layout_marginTop="-40dp"
+              android:text="Image1"
+              android:textSize="20sp"
+              android:textStyle="italic" />
+
+
+          <ImageView
+              android:id="@+id/Image2"
+              android:layout_width="100dp"
+              android:layout_height="150dp"
+              android:layout_below="@+id/sizeRelativeLayout"
+              android:layout_centerHorizontal="true"
+              android:layout_marginLeft="150dp"
+
+              android:src="@drawable/ic_baseline_account_box_24" />
+
+          <TextView
+              android:id="@+id/textView4"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/Image2"
+          android:layout_centerHorizontal="true"
+              android:layout_marginTop="-40dp"
+              android:gravity="center"
+              android:text="Image2"
+              android:textSize="20sp"
+              android:textStyle="italic" />
+
+          <ImageView
+              android:id="@+id/Image3"
+              android:layout_width="100dp"
+              android:layout_height="150dp"
+             android:layout_alignParentRight="true"
+              android:layout_marginRight="20dp"
+              android:layout_below="@+id/sizeRelativeLayout"
+              android:src="@drawable/ic_baseline_account_box_24" />
+          <TextView
+              android:id="@+id/textView5"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/Image3"
+              android:layout_alignParentRight="true"
+              android:layout_marginTop="-40dp"
+              android:layout_marginRight="40dp"
+              android:gravity="left"
+              android:text="Image3"
+              android:textSize="20sp"
+              android:textStyle="italic" />
+          <ImageView
+              android:id="@+id/Image4"
+              android:layout_width="100dp"
+              android:layout_height="150dp"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="20dp"
+              android:layout_below="@+id/Image1"
+              android:src="@drawable/ic_baseline_account_box_24" />
+          <TextView
+              android:id="@+id/textView6"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/Image4"
+              android:layout_alignParentLeft="true"
+              android:layout_marginLeft="40dp"
+              android:layout_marginTop="-40dp"
+              android:text="Image4"
+              android:textSize="20sp"
+              android:textStyle="italic" />
+
+
+          <ImageView
+              android:id="@+id/Image5"
+              android:layout_width="100dp"
+              android:layout_height="150dp"
+              android:layout_centerHorizontal="true"
+              android:layout_marginLeft="150dp"
+
+              android:layout_below="@+id/Image2"
+              android:src="@drawable/ic_baseline_account_box_24" />
+          <TextView
+              android:id="@+id/textView7"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/Image5"
+              android:layout_centerHorizontal="true"
+              android:layout_marginTop="-40dp"
+              android:gravity="center"
+              android:text="Image5"
+              android:textSize="20sp"
+              android:textStyle="italic" />
+
+          <ImageView
+              android:id="@+id/Image6"
+              android:layout_width="100dp"
+              android:layout_height="150dp"
+              android:layout_alignParentRight="true"
+              android:layout_marginRight="20dp"
+              android:layout_below="@+id/Image3"
+              android:src="@drawable/ic_baseline_account_box_24" />
+          <TextView
+              android:id="@+id/textView8"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@id/Image6"
+              android:layout_alignParentRight="true"
+              android:layout_marginTop="-40dp"
+              android:layout_marginRight="40dp"
+              android:gravity="left"
+              android:text="Image6"
+              android:textSize="20sp"
+              android:textStyle="italic" />
+
+          <TextView
+              android:id="@+id/textView15"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentLeft="true"
+              android:layout_below="@+id/Image6"
+              android:layout_marginLeft="36dp"
+              android:layout_marginTop="5dp"
+              android:text="( You Can Chose An Image Filed As
+               \n Size Chart )"
+              android:textSize="15dp" />
+
+          <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="Choose Size Chart"
+              android:layout_marginTop="10dp"
+              android:textSize="18sp"
+              android:textColor="#fff"
+              android:layout_marginRight="20dp"
+              android:background="@color/cardview_dark_background"
+              android:layout_below="@id/textView15"
+              android:id="@+id/sizechartnameTextView"
+              android:layout_marginLeft="20dp"
+/>
+          <androidx.recyclerview.widget.RecyclerView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="10dp"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:padding="5dp"
+              android:id="@+id/sizeChartChoosingRecyclerView"
+              android:layout_below="@id/sizechartnameTextView"/>
+
+          <Button
+              android:id="@+id/submitButton"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/sizeChartChoosingRecyclerView"
+              android:layout_marginBottom="10dp"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:layout_marginTop="20dp"
+              android:background="@drawable/button_background_new"
+
+              android:text="submit"
+              android:textColor="@color/common_google_signin_btn_text_dark_pressed" />
 
       </RelativeLayout>
   </ScrollView>
