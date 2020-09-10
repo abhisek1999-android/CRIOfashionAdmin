@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -42,6 +44,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -100,11 +103,19 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
 
     private RelativeLayout sizeRelativeLayout;
 
+    Boolean check=false;
+    Boolean stateCheck=true;
+
     private EditText package_Includes;
 
     private RecyclerView sizeChartRecyclerView;
     TextView idTextView;
     private TextView imageTex1, imageTex2, imageTex3, imageTex4, imageTex5, imageTex6;
+
+    Double volumerticWeight,sellerPrice,customerPrice,finalWeight,finalSellerPrice;
+    Double packageWidth,packageDepth,packageHeight,packageWeight;
+    Double fildPrice;
+
 
     private ColorSlider.OnColorSelectedListener mListener = new ColorSlider.OnColorSelectedListener() {
         @Override
@@ -121,10 +132,39 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
 
     }
 
+
+    //Uri font_imageUri, back_imageUri, orginal_imageUri;
+    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (currentNetworkInfo.isConnected()) {
+                if (check) {
+                    stateCheck=true;
+                    Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView=snackbar.getView();
+                    snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
+                    snackbar.show();
+                }
+            } else {
+                check = true;
+                stateCheck=false;
+                Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView=snackbar.getView();
+                snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
+                snackbar.show();
+
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color_size_adding);
+
+        getApplicationContext().registerReceiver(mConnReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));//CHECKING CONNECTIVITY
 
         images = new ArrayList<>();
         imageViews = new ArrayList<>();
@@ -177,10 +217,16 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
 
 
         b2bSprice = findViewById(R.id.b2bSPrice);
+       b2bSprice.setEnabled(false);
+       
         b2bMprice = findViewById(R.id.b2bMPrice);
+        b2bMprice.setEnabled(false);
         b2bLprice = findViewById(R.id.b2bLPrice);
+        b2bLprice.setEnabled(false);
         b2bXLprice = findViewById(R.id.b2bXLPrice);
+        b2bXLprice.setEnabled(false);
         b2bXXLprice = findViewById(R.id.b2bXXLPrice);
+        b2bXXLprice.setEnabled(false);
 
         sInventory = findViewById(R.id.sInventory);
         mInventory = findViewById(R.id.mInventory);
@@ -194,7 +240,21 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         xlTextView = findViewById(R.id.textview11);
         xxlTextView = findViewById(R.id.textview12);
 
-        if (childItem.equals("Jeans") | childItem.equals("Leggings")) {
+
+        if (childItem.equals("Saree")|childItem.equals("Scerf")){
+
+            sTextView.setText("450cm");
+            mTextView.setText("550cm");
+            lTextView.setText("650cm");
+            xlTextView.setText("750cm");
+            xxlTextView.setText("850cm");
+
+        }
+
+
+        if (childItem.equals("Jeans") | childItem.equals("Leggings") | childItem.equals("Jeggings")|
+                childItem.equals("Palazzo")|childItem.equals("Hot Pants")|childItem.equals("Trousers")|childItem.equals("Skirt")
+                |childItem.equals("Under Garments")|childItem.equals("Shorts")) {
 
             sTextView.setText("28");
             mTextView.setText("30");
@@ -211,6 +271,36 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         ColorSlider sliderGradientArray = findViewById(R.id.color_slider_gradient_array);
         sliderGradientArray.setGradient(new int[]{Color.MAGENTA, Color.parseColor("#561571"), Color.parseColor("#1c2566"), Color.BLUE, Color.CYAN, Color.parseColor("#00352c"), Color.GREEN, Color.YELLOW, Color.RED, Color.BLACK, Color.WHITE}, 300);
         sliderGradientArray.setListener(mListener);
+
+
+
+
+
+        rootReference.child("products/"+intentItemId+"/package_details/").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+
+                    PackageDetails packageDetails=dataSnapshot.getValue(PackageDetails.class);
+                    assert packageDetails != null;
+                    packageDepth= Double.parseDouble(packageDetails.getPackage_depth());
+                    packageHeight= Double.parseDouble(packageDetails.getPackage_height());
+                    packageWidth= Double.parseDouble(packageDetails.getPackage_width());
+                    packageWeight= Double.parseDouble(packageDetails.getWeight());
+                    volumerticWeight=(packageDepth*packageHeight*packageWidth)/4000;
+
+                }else {
+                    Toast.makeText(ColorSizeAddingActivity.this, "some error occurred1", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(ColorSizeAddingActivity.this, "some error occurred", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
 
 //set pre seted fields
@@ -255,6 +345,63 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
             }
         });
 
+        //CALCULATING GST
+
+      b2cSprice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus){
+                    if (!b2cSprice.getText().toString().equals("")){
+                    b2bSprice.setText(String.valueOf(generateCustomerPrice(Double.parseDouble(b2cSprice.getText().toString()))));
+                } }
+
+            }
+      });
+
+
+        b2cMprice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!b2cMprice.getText().toString().equals("")){
+                    b2bMprice.setText(String.valueOf(generateCustomerPrice(Double.parseDouble(b2cMprice.getText().toString()))));
+
+                }
+            }
+        });
+
+        b2cLprice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!b2cLprice.getText().toString().equals("")){
+                    b2bLprice.setText(String.valueOf(generateCustomerPrice(Double.parseDouble(b2cLprice.getText().toString()))));
+
+                }
+            }
+        });
+
+        b2cXLprice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!b2cXLprice.getText().toString().equals("")){
+                    b2bXLprice.setText(String.valueOf(generateCustomerPrice(Double.parseDouble(b2cXLprice.getText().toString()))));
+
+                }
+            }
+        });
+
+        b2cXXLprice.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!b2cXXLprice.getText().toString().equals("")){
+                    b2bXXLprice.setText(String.valueOf(generateCustomerPrice(Double.parseDouble(b2cXXLprice.getText().toString()))));
+
+                }
+            }
+        });
+
+
+
+
 
         //select image1 from gallery
         imageView1 = findViewById(R.id.Image1);
@@ -271,7 +418,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageUri1 != null & ((CheckImageSize(imageUri1) / 1024) < 160)) {
+                if (imageUri1 != null & ((CheckImageSize(imageUri1) / 1024) < 500)) {
                     Intent gallery1 = new Intent(Intent.ACTION_GET_CONTENT);
                     gallery1.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery1, "Select Image2"), 2);
@@ -285,7 +432,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         imageView3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageUri1 != null & imageUri2 != null & ((CheckImageSize(imageUri1) / 1024) < 160) & ((CheckImageSize(imageUri2) / 1024) < 160)) {
+                if (imageUri1 != null & imageUri2 != null & ((CheckImageSize(imageUri1) / 1024) < 500) & ((CheckImageSize(imageUri2) / 1024) < 500)) {
                     Intent gallery2 = new Intent(Intent.ACTION_GET_CONTENT);
                     gallery2.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery2, "Select Image3"), 3);
@@ -301,8 +448,8 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         imageView4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageUri1 != null & imageUri2 != null & imageUri3 != null & ((CheckImageSize(imageUri1) / 1024) < 160)
-                        & ((CheckImageSize(imageUri2) / 1024) < 160) & ((CheckImageSize(imageUri3) / 1024) < 160)) {
+                if (imageUri1 != null & imageUri2 != null & imageUri3 != null & ((CheckImageSize(imageUri1) / 1024) < 500)
+                        & ((CheckImageSize(imageUri2) / 1024) < 500) & ((CheckImageSize(imageUri3) / 1024) < 500)) {
                     Intent gallery3 = new Intent(Intent.ACTION_GET_CONTENT);
                     gallery3.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery3, "Select Image3"), 4);
@@ -320,8 +467,8 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (imageUri1 != null & imageUri2 != null & imageUri3 != null & imageUri4 != null
-                        & ((CheckImageSize(imageUri1) / 1024) < 160) & ((CheckImageSize(imageUri2) / 1024) < 160)
-                        & ((CheckImageSize(imageUri3) / 1024) < 160) & ((CheckImageSize(imageUri4) / 1024) < 160)) {
+                        & ((CheckImageSize(imageUri1) / 1024) < 500) & ((CheckImageSize(imageUri2) / 1024) < 500)
+                        & ((CheckImageSize(imageUri3) / 1024) < 500) & ((CheckImageSize(imageUri4) / 1024) < 500)) {
                     Intent gallery4 = new Intent(Intent.ACTION_GET_CONTENT);
                     gallery4.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery4, "Select Image3"), 5);
@@ -338,8 +485,8 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (imageUri1 != null & imageUri2 != null & imageUri3 != null & imageUri4 != null & imageUri5 != null
 
-                        & ((CheckImageSize(imageUri1) / 1024) < 160) & ((CheckImageSize(imageUri2) / 1024) < 160)
-                        & ((CheckImageSize(imageUri3) / 1024) < 160) & ((CheckImageSize(imageUri4) / 1024) < 160) & ((CheckImageSize(imageUri5) / 1024) < 160)) {
+                        & ((CheckImageSize(imageUri1) / 1024) < 500) & ((CheckImageSize(imageUri2) / 1024) < 500)
+                        & ((CheckImageSize(imageUri3) / 1024) < 500) & ((CheckImageSize(imageUri4) / 1024) < 500) & ((CheckImageSize(imageUri5) / 1024) < 500)) {
                     Intent gallery5 = new Intent(Intent.ACTION_GET_CONTENT);
                     gallery5.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery5, "Select Image3"), 6);
@@ -385,7 +532,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                if (isConnected(ColorSizeAddingActivity.this)) {
+                if (stateCheck) {
                     colorItemAdded();
                 }
             }
@@ -484,10 +631,10 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         final Map pathRefMap = new HashMap();
         Map sSizeMap = new HashMap();
         if (!b2cSprice.getText().toString().equals("") & !b2bSprice.getText().toString().equals("") & !sInventory.getText().toString().equals("")) {
-            sSizeMap.put("size", sTextView.getText());
-            sSizeMap.put("max_price", Long.parseLong(b2cSprice.getText().toString().trim()));
-            sSizeMap.put("min_price", Long.parseLong(b2bSprice.getText().toString().trim()));
-            sSizeMap.put("pieces", Long.parseLong(sInventory.getText().toString().trim()));
+            sSizeMap.put("size", sTextView.getText().toString());
+            sSizeMap.put("max_price", Double.parseDouble(b2cSprice.getText().toString().trim()));
+            sSizeMap.put("min_price", Double.parseDouble(b2bSprice.getText().toString().trim()));
+            sSizeMap.put("pieces", Double.parseDouble(sInventory.getText().toString().trim()));
             pathRefMap.put(sizePathString + sTextView.getText().toString(), sSizeMap);
 
         } else {
@@ -498,66 +645,66 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
 
         Map mSizeMap = new HashMap();
         if (!b2cMprice.getText().toString().equals("") & !b2bMprice.getText().toString().equals("") & !mInventory.getText().toString().equals("")) {
-            mSizeMap.put("size", mTextView.getText());
-            mSizeMap.put("max_price", Long.parseLong(b2cMprice.getText().toString().trim()));
-            mSizeMap.put("min_price", Long.parseLong(b2bMprice.getText().toString().trim()));
-            mSizeMap.put("pieces", Long.parseLong(mInventory.getText().toString().trim()));
+            mSizeMap.put("size", mTextView.getText().toString());
+            mSizeMap.put("max_price", Double.parseDouble(b2cMprice.getText().toString().trim()));
+            mSizeMap.put("min_price", Double.parseDouble(b2bMprice.getText().toString().trim()));
+            mSizeMap.put("pieces", Double.parseDouble(mInventory.getText().toString().trim()));
             pathRefMap.put(sizePathString + mTextView.getText().toString(), mSizeMap);
         }
 
         Map lSizeMap = new HashMap();
         if (!b2cLprice.getText().toString().equals("") & !b2bLprice.getText().toString().equals("") & !lInventory.getText().toString().equals("")) {
-            lSizeMap.put("size", lTextView.getText());
-            lSizeMap.put("max_price", Long.parseLong(b2cLprice.getText().toString().trim()));
-            lSizeMap.put("min_price", Long.parseLong(b2bLprice.getText().toString().trim()));
-            lSizeMap.put("pieces", Long.parseLong(lInventory.getText().toString().trim()));
+            lSizeMap.put("size", lTextView.getText().toString());
+            lSizeMap.put("max_price", Double.parseDouble(b2cLprice.getText().toString().trim()));
+            lSizeMap.put("min_price", Double.parseDouble(b2bLprice.getText().toString().trim()));
+            lSizeMap.put("pieces", Double.parseDouble(lInventory.getText().toString().trim()));
             pathRefMap.put(sizePathString + lTextView.getText().toString(), lSizeMap);
         }
 
 
         Map xlSizeMap = new HashMap();
         if (!b2cXLprice.getText().toString().equals("") & !b2bXLprice.getText().toString().equals("") & !xlInventory.getText().toString().equals("")) {
-            xlSizeMap.put("size", xlTextView.getText());
-            xlSizeMap.put("max_price", Long.parseLong(b2cXLprice.getText().toString().trim()));
-            xlSizeMap.put("min_price", Long.parseLong(b2bXLprice.getText().toString().trim()));
-            xlSizeMap.put("pieces", Long.parseLong(xlInventory.getText().toString().trim()));
+            xlSizeMap.put("size", xlTextView.getText().toString());
+            xlSizeMap.put("max_price", Double.parseDouble(b2cXLprice.getText().toString().trim()));
+            xlSizeMap.put("min_price", Double.parseDouble(b2bXLprice.getText().toString().trim()));
+            xlSizeMap.put("pieces", Double.parseDouble(xlInventory.getText().toString().trim()));
             pathRefMap.put(sizePathString + xlTextView.getText().toString(), xlSizeMap);
         }
 
         Map xxlSizeMap = new HashMap();
         if (!b2cXXLprice.getText().toString().equals("") & !b2bXXLprice.getText().toString().equals("") & !xxlInventory.getText().toString().equals("")) {
-            xxlSizeMap.put("size", xxlTextView.getText());
-            xxlSizeMap.put("max_price", Long.parseLong(b2cXXLprice.getText().toString().trim()));
-            xxlSizeMap.put("min_price", Long.parseLong(b2bXXLprice.getText().toString().trim()));
-            xxlSizeMap.put("pieces", Long.parseLong(xxlInventory.getText().toString().trim()));
+            xxlSizeMap.put("size", xxlTextView.getText().toString());
+            xxlSizeMap.put("max_price", Double.parseDouble(b2cXXLprice.getText().toString().trim()));
+            xxlSizeMap.put("min_price", Double.parseDouble(b2bXXLprice.getText().toString().trim()));
+            xxlSizeMap.put("pieces", Double.parseDouble(xxlInventory.getText().toString().trim()));
             pathRefMap.put(sizePathString + xxlTextView.getText().toString(), xxlSizeMap);
         }
 
 
         Long sizeImage1 = CheckImageSize(imageUri1) / 1024;
 
-        if (imageUri1 != null & sizeImage1 > 160) {
+        if (imageUri1 != null & sizeImage1 > 500) {
             imageViews.add(imageUri1);
         }
-        if (imageUri2 != null & (CheckImageSize(imageUri2) / 1024) > 160) {
+        if (imageUri2 != null & (CheckImageSize(imageUri2) / 1024) > 500) {
             imageViews.add(imageUri2);
         }
-        if (imageUri3 != null & (CheckImageSize(imageUri3) / 1024) > 160) {
+        if (imageUri3 != null & (CheckImageSize(imageUri3) / 1024) > 500) {
             imageViews.add(imageUri3);
         }
-        if (imageUri4 != null & (CheckImageSize(imageUri4) / 1024) > 160) {
+        if (imageUri4 != null & (CheckImageSize(imageUri4) / 1024) > 500) {
             imageViews.add(imageUri4);
         }
-        if (imageUri5 != null & (CheckImageSize(imageUri5) / 1024) > 160) {
+        if (imageUri5 != null & (CheckImageSize(imageUri5) / 1024) > 500) {
             imageViews.add(imageUri5);
         }
-        if (imageUri6 != null & (CheckImageSize(imageUri6) / 1024) > 160) {
+        if (imageUri6 != null & (CheckImageSize(imageUri6) / 1024) > 500) {
             imageViews.add(imageUri6);
         }
 
 
         if (imageUri1 != null) {
-            if (sizeImage1 < 160) {
+            if (sizeImage1 < 500) {
                 images.add(imageUri1);
                 imageTex1.setText("image 1");
             } else {
@@ -569,7 +716,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
 
 
         if (imageUri2 != null) {
-            if ((CheckImageSize(imageUri2) / 1024) < 160) {
+            if ((CheckImageSize(imageUri2) / 1024) < 500) {
                 images.add(imageUri2);
                 imageTex2.setText("image 2");
 
@@ -582,7 +729,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
 
         if (imageUri3 != null) {
 
-            if ((CheckImageSize(imageUri3) / 1024) < 160) {
+            if ((CheckImageSize(imageUri3) / 1024) < 500) {
                 images.add(imageUri3);
                 imageTex3.setText("image 3");
             } else {
@@ -593,7 +740,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         }
 
         if (imageUri4 != null) {
-            if ((CheckImageSize(imageUri4) / 1024) < 160) {
+            if ((CheckImageSize(imageUri4) / 1024) < 500) {
                 images.add(imageUri4);
                 imageTex4.setText("image 4");
             } else {
@@ -604,7 +751,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         }
 
         if (imageUri5 != null) {
-            if ((CheckImageSize(imageUri5) / 1024) < 160) {
+            if ((CheckImageSize(imageUri5) / 1024) < 500) {
                 images.add(imageUri5);
                 imageTex5.setText("image 5");
             } else {
@@ -615,7 +762,7 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         }
 
         if (imageUri6 != null) {
-            if ((CheckImageSize(imageUri6) / 1024) < 160) {
+            if ((CheckImageSize(imageUri6) / 1024) < 500) {
                 images.add(imageUri6);
                 imageTex5.setText("image 6");
             } else {
@@ -1102,6 +1249,70 @@ public class ColorSizeAddingActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.setCancelable(false);
         alert.show();
+    }
+
+    public Double generateCustomerPrice(double v){
+
+        fildPrice= v;
+
+
+        sellerPrice=fildPrice+((fildPrice*6)/100);
+        finalSellerPrice=sellerPrice;
+
+        if (packageWeight>volumerticWeight)
+            finalWeight=packageWeight;
+        else
+            finalWeight=volumerticWeight;
+
+
+
+        if (finalWeight<0.5){
+
+            if (sellerPrice<500){
+                finalSellerPrice+=80;
+            }
+            else if (sellerPrice>=500 && sellerPrice<1000){
+                finalSellerPrice+=100;
+            }
+            else
+                finalSellerPrice+=120;
+
+        }
+
+        else if (finalWeight>=0.5 && finalWeight <1){
+
+            if (sellerPrice<500){
+                finalSellerPrice+=100;
+            }
+            else if (sellerPrice>=500 && sellerPrice<1000){
+                finalSellerPrice+=130;
+            }
+            else
+                finalSellerPrice+=200;
+
+        }
+        else if (finalWeight>=1 && finalWeight <1.5){
+
+            if (sellerPrice<1000){
+                finalSellerPrice+=150;
+            }
+            else if (sellerPrice>=1000 && sellerPrice<2000){
+                finalSellerPrice+=200;
+            }
+            else
+                finalSellerPrice+=300;
+
+        }
+
+        if (finalSellerPrice>1000){
+            customerPrice=finalSellerPrice+(finalSellerPrice*12/100);
+        }
+        if (finalSellerPrice<1000){
+            customerPrice=finalSellerPrice+(finalSellerPrice*5/100);
+        }
+
+        return Math.ceil(customerPrice);
+
     }
 
 

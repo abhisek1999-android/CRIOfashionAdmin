@@ -26,6 +26,7 @@ public class Products {
    String jewellery_plating;
    String thumb_image;
    String size_chart;
+   String brand_name;
 
 
 
@@ -222,8 +223,17 @@ public class Products {
         this.overview = overview;
     }
 
+    public String getBrand_name() {
+        return brand_name;
+    }
+
+    public void setBrand_name(String brand_name) {
+        this.brand_name = brand_name;
+    }
+
     public Products(String name, String price, String description, String colour, String company, String productId, String back_image_url, String front_image_url, String original_image_url, String product_for, String product_type, String product_size, String sortdescription, String company_id, String parent_category,
-                    String base_material, String jewellery_plating, String upload_status, String warranty_description, String package_includes, String overview,String size_chart) {
+                    String base_material, String jewellery_plating, String upload_status, String warranty_description, String package_includes,
+                    String overview, String size_chart, String brand_name) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -246,6 +256,7 @@ public class Products {
         this.package_includes = package_includes;
         this.overview = overview;
         this.size_chart = size_chart;
+        this.brand_name=brand_name;
     }
 
     String warranty_description;

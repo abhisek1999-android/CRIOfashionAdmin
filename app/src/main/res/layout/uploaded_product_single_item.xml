@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="110dp"
     android:layout_marginTop="3dp"
     android:background="#fff">
 
@@ -19,10 +19,50 @@
     android:layout_height="wrap_content"
     android:text="Item Name"
     android:layout_toEndOf="@id/productsImage"
-    android:layout_centerVertical="true"
+    android:layout_marginTop="6dp"
     android:textSize="25sp"
     android:id="@+id/itemName"
+    android:fontFamily="@font/futurapt_font"
     android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info 3"
+        android:layout_below="@id/itemName"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@id/productsImage"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:id="@+id/info3"
+        android:fontFamily="@font/futurapt_font"
+android:visibility="gone"
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info 1"
+        android:layout_below="@id/info3"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@id/productsImage"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:id="@+id/info1"
+        android:fontFamily="@font/futurapt_font"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info2"
+        android:fontFamily="@font/futurapt_font"
+        android:layout_below="@id/info1"
+        android:layout_toEndOf="@id/productsImage"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:id="@+id/info2"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"/>
 
     <ImageView
         android:layout_width="30dp"

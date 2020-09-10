@@ -7,12 +7,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -36,6 +39,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -96,15 +100,47 @@ public class MainActivity extends AppCompatActivity {
     private String productId_unique;
 
     private Boolean validProductID;
+    Boolean check=false;
+    Boolean stateCheck=true;
 
+
+    View parentLayout;
 
     //Uri font_imageUri, back_imageUri, orginal_imageUri;
+    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (currentNetworkInfo.isConnected()) {
+                if (check) {
+                    stateCheck=true;
+                    Snackbar snackbar=Snackbar.make(parentLayout, "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView=snackbar.getView();
+                    snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
+                    snackbar.show();
+                }
+            } else {
+                check = true;
+                stateCheck=false;
+                Snackbar snackbar=Snackbar.make(parentLayout, "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView=snackbar.getView();
+                snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
+                snackbar.show();
+
+            }
+        }
+    };
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getApplicationContext().registerReceiver(mConnReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));//CHECKING CONNECTIVITY
+
         databaseReference = FirebaseDatabase.getInstance().getReference();               //connection to root of the database
         mAuth = FirebaseAuth.getInstance();
         firebaseUser = mAuth.getCurrentUser();
@@ -116,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
         product_Feature=findViewById(R.id.productFeature);
         product_type = findViewById(R.id.productType);//this is editText now
         product_for=findViewById(R.id.productFor);
+
+        parentLayout= findViewById(android.R.id.content);
+
+
+
 
         validProductID=true;
 
@@ -141,10 +182,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        if (parentCategory.equals("Home Accessories") | parentCategory.equals("Furniture"))//for furniture boy girl choose must be gone
+        if (parentCategory.equals("Home Accessories") | parentCategory.equals("Furniture") | parentCategory.equals("Stationary"))//for furniture boy girl choose must be gone
         {
             product_for.setVisibility(View.GONE);//for invisible the boys girls field
-            product_for_item=parentCategory;//boys girls none
+            product_for_item=parentCategory;//boys girls parent category
         }
 
 
@@ -171,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         submit_data.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isConnected(MainActivity.this)){
+                if(stateCheck){
                 Datasubmit();}
 
             }
@@ -189,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         forAdapter.setDropDownViewResource(R.layout.spinner_dropdown_layout);
         product_for.setAdapter(forAdapter);
 
-        if(parentCategory.equals("Saree") | parentCategory.equals("Girls Fashion")){  //for selection of girls when girls item in clicked
+        if( parentCategory.equals("Woman's Fashion") | childCategory.equals("Ladies Purse")){  //for selection of girls when girls item in clicked
             product_for.setSelection(1);
             product_for_item=product_for.getSelectedItem().toString();
 
@@ -260,147 +301,172 @@ public class MainActivity extends AppCompatActivity {
     private void Datasubmit() {
 
         if(validProductID){
+                if (productId.getEditText().getText().toString().equals("") |product_name.getText().toString().equals("")| product_description.getText().toString().equals("")
+                        |package_width.getText().toString().equals("")|package_height.getText().toString().equals("")|package_depth.getText().toString().equals("")
+                        |package_weight.getText().toString().equals(""))
+
+                {
+                    Toast.makeText(MainActivity.this, "Some Fields Are Empty!", Toast.LENGTH_SHORT).show();
+
+                }
+
+                else {
+
+                    if (Double.parseDouble(package_weight.getText().toString())<1.5){
+
+                        showProgressDialog();
+                        String nameProduct = product_name.getText().toString();
+                        String descriptionProduct = product_description.getText().toString();
+                        String companyProduct = product_company.getText().toString();
+                        String overviewProduct = product_overview.getText().toString();
+                        productId_unique = productId.getEditText().getText().toString()+seller_id;
+                        final String shortDescription = product_shortdescription.getText().toString();
+                        final String productMaterial  = product_material.getText().toString();
+                        String materialWeight=material_weight.getText().toString();
+                        final String careInstruction = product_careinstruction.getText().toString();
+                        String packageWidth = package_width.getText().toString();
+                        final String packageHeight = package_height.getText().toString();
+                        String packageDepth = package_depth.getText().toString();
+                        String packageWeight = package_weight.getText().toString();
+                        final String productFeature=product_Feature.getText().toString();
+
+                        //  String path_ref = "products/" + productId_unique;
+
+
+                        Map productHashMap = new HashMap();
+                        productHashMap.put("name", nameProduct);
+                        productHashMap.put("description", descriptionProduct);
+                        productHashMap.put("company", companyProduct);
+                        productHashMap.put("overview", overviewProduct);
+                        productHashMap.put("productId", productId_unique);
+                        productHashMap.put("short_description", shortDescription);
+                        productHashMap.put("product_material", productMaterial);
+                        productHashMap.put("material_weight",materialWeight);
+                        productHashMap.put("care_information", careInstruction);
+                        productHashMap.put("company_id",firebaseUser.getUid());
+                        productHashMap.put("product_for",product_for_item);
+                        productHashMap.put("product_type",product_type_item);
+                        productHashMap.put("product_Feature",productFeature);
+                        productHashMap.put("parent_category",parentCategory);
+                        productHashMap.put("upload_status","false");
 
 
 
-        if (productId.getEditText().getText().toString().equals("") |product_name.getText().toString().equals("")| product_description.getText().toString().equals("")
-                |package_width.getText().toString().equals("")|package_height.getText().toString().equals("")|package_depth.getText().toString().equals("")
-        |package_weight.getText().toString().equals(""))
 
-        {
-            Toast.makeText(MainActivity.this, "Some Fields Are Empty!", Toast.LENGTH_SHORT).show();
+                        final Map packageHashMap=new HashMap();
+                        packageHashMap.put("package_width",packageWidth);
+                        packageHashMap.put("package_height",packageHeight);
+                        packageHashMap.put("package_depth",packageDepth);
+                        packageHashMap.put("weight",packageWeight);
 
-        }
+                        final Map pathRefMap = new HashMap();
+                        pathRefMap.put("products/"+productId_unique+"/package_details" , packageHashMap);
 
-        else {
-        showProgressDialog();
-        String nameProduct = product_name.getText().toString();
-        String descriptionProduct = product_description.getText().toString();
-        String companyProduct = product_company.getText().toString();
-        String overviewProduct = product_overview.getText().toString();
-        productId_unique = productId.getEditText().getText().toString()+seller_id;
-        final String shortDescription = product_shortdescription.getText().toString();
-        final String productMaterial  = product_material.getText().toString();
-        String materialWeight=material_weight.getText().toString();
-        final String careInstruction = product_careinstruction.getText().toString();
-        String packageWidth = package_width.getText().toString();
-        final String packageHeight = package_height.getText().toString();
-        String packageDepth = package_depth.getText().toString();
-        String packageWeight = package_weight.getText().toString();
-        final String productFeature=product_Feature.getText().toString();
-
-      //  String path_ref = "products/" + productId_unique;
-
-
-        Map productHashMap = new HashMap();
-        productHashMap.put("name", nameProduct);
-        productHashMap.put("description", descriptionProduct);
-        productHashMap.put("company", companyProduct);
-        productHashMap.put("overview", overviewProduct);
-        productHashMap.put("productId", productId_unique);
-        productHashMap.put("short_description", shortDescription);
-        productHashMap.put("product_material", productMaterial);
-        productHashMap.put("material_weight",materialWeight);
-        productHashMap.put("care_information", careInstruction);
-        productHashMap.put("company_id",firebaseUser.getUid());
-        productHashMap.put("product_for",product_for_item);
-        productHashMap.put("product_type",product_type_item);
-        productHashMap.put("product_Feature",productFeature);
-        productHashMap.put("parent_category",parentCategory);
-        productHashMap.put("upload_status","false");
-
-
-
-
-        final Map packageHashMap=new HashMap();
-            packageHashMap.put("package_width",packageWidth);
-            packageHashMap.put("package_height",packageHeight);
-            packageHashMap.put("package_depth",packageDepth);
-            packageHashMap.put("package_weight",packageWeight);
-
-            final Map pathRefMap = new HashMap();
-            pathRefMap.put("products/"+productId_unique+"/package_details" , packageHashMap);
-
-            databaseReference.child("products/" + productId_unique).setValue(productHashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-
-                    if (task.isSuccessful()){
-
-
-                        databaseReference.updateChildren(pathRefMap, new DatabaseReference.CompletionListener() {
+                        databaseReference.child("products/" + productId_unique).setValue(productHashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                if (databaseError == null) {
-                                    Toast.makeText(MainActivity.this, "Added SuccessFully!", Toast.LENGTH_SHORT).show();
+                            public void onComplete(@NonNull Task<Void> task) {
 
-                                    product_name.setText("");
-                                    product_company.setText("");
-                                    product_description.setText("");
-                                    product_overview.setText("");
-                                    product_shortdescription.setText("");
-                                    product_material.setText("");
-                                    product_careinstruction.setText("");
-                                    package_height.setText("");
-                                    package_width.setText("");
-                                    package_depth.setText("");
-                                    package_weight.setText("");
-                                    dismissProgressDialog();
-                                    product_Feature.setText("");
-                                    material_weight.setText("");
-
-                                    //intending depends on the category
-
-                                    if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories"))
-
-                                    {
-                                        Intent intent=new Intent(getApplicationContext(),others_details.class);
-                                        intent.putExtra("itemId",productId_unique);
-                                        intent.putExtra("parentCategory",parentCategory);
-                                        intent.putExtra("childCategory",childCategory);
-                                        startActivity(intent);
-                                    }
-                                    else if(parentCategory.equals("Jewellery"))
-                                    {
-                                        Intent intent=new Intent(getApplicationContext(),Jewellery.class);
-                                        intent.putExtra("itemId",productId_unique);
-                                        intent.putExtra("parentCategory",parentCategory);
-                                        intent.putExtra("childCategory",childCategory);
-                                        startActivity(intent);
-                                    }
-                                    else{
-                                        Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
-                                        intent.putExtra("itemId", productId_unique);
-                                        intent.putExtra("parentCategory", parentCategory);
-                                        intent.putExtra("childCategory", childCategory);
-                                        startActivity(intent);
-                                    }
+                                if (task.isSuccessful()){
 
 
-                                }else {
-                                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                                    dismissProgressDialog();
+                                    databaseReference.updateChildren(pathRefMap, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                            if (databaseError == null) {
+                                                Toast.makeText(MainActivity.this, "Added SuccessFully!", Toast.LENGTH_SHORT).show();
+
+                                                product_name.setText("");
+                                                product_company.setText("");
+                                                product_description.setText("");
+                                                product_overview.setText("");
+                                                product_shortdescription.setText("");
+                                                product_material.setText("");
+                                                product_careinstruction.setText("");
+                                                package_height.setText("");
+                                                package_width.setText("");
+                                                package_depth.setText("");
+                                                package_weight.setText("");
+                                                dismissProgressDialog();
+                                                product_Feature.setText("");
+                                                material_weight.setText("");
+
+                                                //intending depends on the category
+
+                                                if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories"))
+
+                                                {
+                                                    Intent intent=new Intent(getApplicationContext(),others_details.class);
+                                                    intent.putExtra("itemId",productId_unique);
+                                                    intent.putExtra("parentCategory",parentCategory);
+                                                    intent.putExtra("childCategory",childCategory);
+                                                    startActivity(intent);
+                                                }
+                                                else if(childCategory.equals("Jewellery"))
+                                                {
+                                                    Intent intent=new Intent(getApplicationContext(),Jewellery.class);
+                                                    intent.putExtra("itemId",productId_unique);
+                                                    intent.putExtra("parentCategory",parentCategory);
+                                                    intent.putExtra("childCategory",childCategory);
+                                                    startActivity(intent);
+                                                }
+
+                                                else if(parentCategory.equals("Stationary") | parentCategory.equals("Fashion Accessories"))
+                                                {
+                                                    Intent intent=new Intent(getApplicationContext(),Stationery.class);
+                                                    intent.putExtra("itemId",productId_unique);
+                                                    intent.putExtra("parentCategory",parentCategory);
+                                                    intent.putExtra("childCategory",childCategory);
+                                                    startActivity(intent);
+                                                }
+                                                else{
+                                                    Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
+                                                    intent.putExtra("itemId", productId_unique);
+                                                    intent.putExtra("parentCategory", parentCategory);
+                                                    intent.putExtra("childCategory", childCategory);
+                                                    startActivity(intent);
+                                                }
+
+
+                                            }else {
+                                                Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                                dismissProgressDialog();
+                                            }
+                                        }
+                                    });
+
+
                                 }
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                dismissProgressDialog();
+
                             }
                         });
 
 
+
+
+
+
+                    }else {
+                        Toast.makeText(this, "weight should be less then 1.5 kg!", Toast.LENGTH_SHORT).show();
                     }
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    dismissProgressDialog();
 
                 }
-            });
 
 
 
-        }
+
+            //////////////
+
+
+
         }else {
             Toast.makeText(this, "Please provide a valid Product ID!", Toast.LENGTH_SHORT).show();
         }
@@ -426,21 +492,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public boolean isConnected(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-        if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
-            return true;
-
-        } else {
-            showDialog();
-            return false;
-        }
-    }
-
-    private void showDialog() {
+  /*  private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("You are not connected to the Internet!")
                 .setCancelable(false)
@@ -461,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alert = builder.create();
         alert.setCancelable(false);
         alert.show();
-    }
+    }*/
 
 
 }

@@ -3,15 +3,15 @@ package com.sn77.crio.criofashionadmin.date20200627921am;
 public class SizesItems {
 
    Long pieces;//this should be chnaged to the database spalling incorrect
-   Long max_price;
-    Long min_price;
+  Double max_price;
+ Double min_price;
     String size;
 
     public SizesItems(){
 
     }
 
-    public SizesItems(Long pieces, Long max_price, Long min_price, String size) {
+    public SizesItems(Long pieces, Double max_price, Double min_price, String size) {
         this.pieces = pieces;
         this.max_price = max_price;
         this.min_price = min_price;
@@ -26,19 +26,19 @@ public class SizesItems {
         this.pieces = pieces;
     }
 
-    public Long getMax_price() {
+    public Double getMax_price() {
         return max_price;
     }
 
-    public void setMax_price(Long max_price) {
+    public void setMax_price(Double max_price) {
         this.max_price = max_price;
     }
 
-    public Long getMin_price() {
+    public Double getMin_price() {
         return min_price;
     }
 
-    public void setMin_price(Long min_price) {
+    public void setMin_price(Double min_price) {
         this.min_price = min_price;
     }
 

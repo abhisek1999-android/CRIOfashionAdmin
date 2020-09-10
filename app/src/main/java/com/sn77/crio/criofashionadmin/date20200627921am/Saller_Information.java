@@ -13,10 +13,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -83,7 +86,7 @@ public class Saller_Information extends AppCompatActivity {
     private CircleImageView user_image;
     protected ProgressDialog progressDialog;
     private RecyclerView sizeChartRecyclerView;
-    private Uri userImageUri;
+    Uri userImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +151,7 @@ public class Saller_Information extends AppCompatActivity {
                 companyId.setText(companyDetails.getSeller_id());
 
                 if (companyDetails.getUser_image()!=null) {
-                    Picasso.with(getApplicationContext()).load(companyDetails.getUser_image()).into(user_image);
+                    Picasso.with(getApplicationContext()).load(companyDetails.getUser_image()).placeholder(R.drawable.ic_user).into(user_image);
                 }
 
 
@@ -166,7 +169,7 @@ public class Saller_Information extends AppCompatActivity {
         user_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadProfilePhoto();
+                //uploadProfilePhoto();
             }
         });
         sizeChartName=findViewById(R.id.sizeChartName);
@@ -218,85 +221,101 @@ public class Saller_Information extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                userImageUri= result.getUri();
+                user_image.setImageURI(userImageUri);
+
+                // final String randomkey = UUID.randomUUID().toString();
+
+
+
+                if (  userImageUri!=null){
+                    final StorageReference riversRef = pStorageRef.child("Seller_image").child(mCurrentUser.getUid()).child("user_image.jpg");
+                    showProgressDialog();
+                    riversRef.putFile(userImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    final String downloadUrl = uri.toString();
+                                    Map   companyDetails=new HashMap();
+                                    companyDetails.put("user_image",downloadUrl);
+
+                                    companyInfoRef.child(mCurrentUser.getUid()).updateChildren(companyDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            if (task.isSuccessful()){
+                                                dismissProgressDialog();
+                                                Toast.makeText(Saller_Information.this, "Added Successfully", Toast.LENGTH_SHORT).show();
+
+                                            }
+
+
+                                            else {
+                                                dismissProgressDialog();
+                                                Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            dismissProgressDialog();
+                                            Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+
+
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+                            // Toast.makeText(CompanyDetailsActivity.this, "done", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }else {
+                    Toast.makeText(this, "Image size must be less then  150KB", Toast.LENGTH_SHORT).show();
+                    dismissProgressDialog();
+                }
+
+
+
+
+
+            }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+
+
+        }
+
+
+
+
         if (resultCode == RESULT_OK && requestCode == 1) {
             assert data != null;
-            sizeChartUri = data.getData()
-            ;
+            sizeChartUri = data.getData();
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), sizeChartUri);
                 sizeChart.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                userImageUri= result.getUri();
-
-
-
-               // final String randomkey = UUID.randomUUID().toString();
-                final StorageReference riversRef = pStorageRef.child("Seller_image").child(mCurrentUser.getUid()).child("user_image.jpg");
-                showProgressDialog();
-                riversRef.putFile(userImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                final String downloadUrl = uri.toString();
-                                Map   companyDetails=new HashMap();
-                                companyDetails.put("user_image",downloadUrl);
-
-                                companyInfoRef.child(mCurrentUser.getUid()).updateChildren(companyDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        if (task.isSuccessful()){
-                                            dismissProgressDialog();
-                                            Toast.makeText(Saller_Information.this, "Added Successfully", Toast.LENGTH_SHORT).show();
-
-                                        }
-
-
-                                        else {
-                                            dismissProgressDialog();
-                                            Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        dismissProgressDialog();
-                                        Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-
-
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-
-                            }
-                        });
-
-                        // Toast.makeText(CompanyDetailsActivity.this, "done", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-
-
-            }
-
-
         }
 
 
@@ -308,50 +327,63 @@ public class Saller_Information extends AppCompatActivity {
     }
     //size chart
     public void uploadImage(View view) {
-        if (sizeChartUri!=null&!sizeChartName.getText().toString().equals("")) {
-            showProgressDialog();
-            final String randomkey1 = UUID.randomUUID().toString();
-            final StorageReference chartRef = pStorageRef.child("Size_charts").child(mCurrentUser.getUid()).child(randomkey1 + ".jpg");
-            chartRef.putFile(sizeChartUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    chartRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
 
-                            String downloadUrl1 = uri.toString();
-                            Map sizeChartDetails = new HashMap();
-                            sizeChartDetails.put("size_chart_name", sizeChartName.getText().toString());
-                            sizeChartDetails.put("chart_url", downloadUrl1);
 
-                            companyInfoRef.child(mCurrentUser.getUid()).child("size_charts").child(sizeChartName.getText().toString()).updateChildren(sizeChartDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        dismissProgressDialog();
-                                        Toast.makeText(Saller_Information.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-                                        sizeChartName.setText("");
-                                        sizeChart.setImageResource(R.drawable.ic_baseline_account_box_24);
-                                        dismissProgressDialog();
+        if ((CheckImageSize(sizeChartUri) / 1024)<160){
 
-                                    } else {
-                                        dismissProgressDialog();
-                                        Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+
+
+            if (sizeChartUri!=null&!sizeChartName.getText().toString().equals("")) {
+                showProgressDialog();
+                final String randomkey1 = UUID.randomUUID().toString();
+                final StorageReference chartRef = pStorageRef.child("Size_charts").child(mCurrentUser.getUid()).child(randomkey1 + ".jpg");
+                chartRef.putFile(sizeChartUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        chartRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+
+                                String downloadUrl1 = uri.toString();
+                                Map sizeChartDetails = new HashMap();
+                                sizeChartDetails.put("size_chart_name", sizeChartName.getText().toString());
+                                sizeChartDetails.put("chart_url", downloadUrl1);
+
+                                companyInfoRef.child(mCurrentUser.getUid()).child("size_charts").child(sizeChartName.getText().toString()).updateChildren(sizeChartDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            dismissProgressDialog();
+                                            Toast.makeText(Saller_Information.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                                            sizeChartName.setText("");
+                                            sizeChart.setImageResource(R.drawable.ic_baseline_account_box_24);
+                                            dismissProgressDialog();
+
+                                        } else {
+                                            dismissProgressDialog();
+                                            Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                        }
+
+
                                     }
+                                });
 
+                            }
+                        });
+                    }
+                });
+            }else {
+                Toast.makeText(this, "You Have To Select Name And Image Both", Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
+            }
 
-                                }
-                            });
-
-                        }
-                    });
-                }
-            });
         }else {
-            Toast.makeText(this, "You Have To Select Name And Image Both", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Image size must be less then  150KB", Toast.LENGTH_SHORT).show();
             dismissProgressDialog();
         }
+
     }
 
 
@@ -539,6 +571,30 @@ else {
     }
 
 
+    public long CheckImageSize(Uri uri) {
+        Cursor returnCursor = null;
+        int sizeIndex = 0;
+
+        if (uri != null) {
+            returnCursor = getContentResolver().query(uri, null, null, null, null);
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+            returnCursor.moveToFirst();
+            Log.e("TAG", "Name:" + returnCursor.getString(nameIndex));
+            Log.e("TAG", "Size: " + Long.toString(returnCursor.getLong(sizeIndex)));
+            //Toast.makeText(this,Long.toString(returnCursor.getLong(sizeIndex)) , Toast.LENGTH_SHORT).show();
+            return returnCursor.getLong(sizeIndex);
+        } else {
+
+            //Toast.makeText(this,"empty" , Toast.LENGTH_SHORT).show();
+            return 200;
+        }
+
+
+    }
+
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -566,6 +622,17 @@ else {
             }
         };sizeChartRecyclerView.setAdapter(sizeChartHolder);
         sizeChartHolder.startListening();
+    }
+
+
+
+
+
+
+    public void ChangeProfilePicture(View view) {
+
+        uploadProfilePhoto();
+
     }
 
 

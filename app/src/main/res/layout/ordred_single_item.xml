@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="3dp"
+    android:background="#fff">
+
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_baseline_image_search_24"
+        android:id="@+id/productsImage"/>
+
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Item Name"
+    android:layout_toEndOf="@id/productsImage"
+    android:layout_marginTop="6dp"
+    android:textSize="25sp"
+    android:id="@+id/itemName"
+    android:fontFamily="@font/futurapt_font"
+    android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info 1"
+        android:layout_below="@id/itemName"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@id/productsImage"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:id="@+id/info1"
+        android:fontFamily="@font/futurapt_font"
+        android:layout_marginLeft="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info2"
+        android:fontFamily="@font/futurapt_font"
+        android:layout_below="@id/info1"
+        android:layout_toEndOf="@id/productsImage"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:id="@+id/info2"
+
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info 3"
+        android:layout_below="@id/info2"
+        android:layout_marginTop="2dp"
+        android:layout_toEndOf="@id/productsImage"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:id="@+id/info3"
+        android:fontFamily="@font/futurapt_font"
+
+        android:layout_marginLeft="10dp"/>
+
+
+
+
+
+
+
+
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:id="@+id/DownloadInvoice"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        app:cardCornerRadius="30dp"
+        app:cardBackgroundColor="@color/colorAccent"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentBottom="true"
+        android:padding="10dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="2dp"
+                android:src="@drawable/ic_download_logo_one"/>
+
+            <TextView
+
+                android:padding="5dp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:textSize="10dp"
+              android:layout_marginLeft="2dp"
+                android:textStyle="bold"
+                android:text="INVOICE"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

@@ -9,12 +9,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -244,9 +254,9 @@ if (!companyName.getText().toString().equals("") & !userName.getText().toString(
 
 
 
-    if (userImageUri!=null){
-        final String randomkey = UUID.randomUUID().toString();
-        final StorageReference riversRef = pStorageRef.child("Seller_image").child(mCurrentUser.getUid()).child(randomkey+".jpg");
+    if (userImageUri!=null && (CheckImageSize(sizeChartUri) / 1024)<160){
+
+        final StorageReference riversRef = pStorageRef.child("Seller_image").child(mCurrentUser.getUid()).child("user_image.jpg");
 
         riversRef.putFile(userImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -368,50 +378,60 @@ else {
 
    //size chart
     public void uploadImage(View view) {
-        if (sizeChartUri!=null & !sizeChartName.getText().toString().equals("")) {
-            showProgressDialog();
-            final String randomkey1 = UUID.randomUUID().toString();
-            final StorageReference chartRef = pStorageRef.child("Size_charts").child(mCurrentUser.getUid()).child(randomkey1 + ".jpg");
-            chartRef.putFile(sizeChartUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    chartRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
 
-                            String downloadUrl1 = uri.toString();
-                            Map sizeChartDetails = new HashMap();
-                            sizeChartDetails.put("size_chart_name", sizeChartName.getText().toString());
-                            sizeChartDetails.put("chart_url", downloadUrl1);
 
-                            rootRef.child("company_details").child(mCurrentUser.getUid()).child("size_charts").child(sizeChartName.getText().toString()).updateChildren(sizeChartDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        dismissProgressDialog();
-                                        Toast.makeText(CompanyDetailsActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+        if (isConnected(CompanyDetailsActivity.this)){
 
-                                        sizeChartName.setText("");
-                                        sizeChart.setImageResource(R.drawable.ic_baseline_account_box_24);
-                                        dismissProgressDialog();
 
-                                    } else {
-                                        dismissProgressDialog();
-                                        Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+
+            if (sizeChartUri!=null & !sizeChartName.getText().toString().equals("")) {
+                showProgressDialog();
+                final String randomkey1 = UUID.randomUUID().toString();
+                final StorageReference chartRef = pStorageRef.child("Size_charts").child(mCurrentUser.getUid()).child(randomkey1 + ".jpg");
+                chartRef.putFile(sizeChartUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        chartRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+
+                                String downloadUrl1 = uri.toString();
+                                Map sizeChartDetails = new HashMap();
+                                sizeChartDetails.put("size_chart_name", sizeChartName.getText().toString());
+                                sizeChartDetails.put("chart_url", downloadUrl1);
+
+                                rootRef.child("company_details").child(mCurrentUser.getUid()).child("size_charts").child(sizeChartName.getText().toString()).updateChildren(sizeChartDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            dismissProgressDialog();
+                                            Toast.makeText(CompanyDetailsActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+
+                                            sizeChartName.setText("");
+                                            sizeChart.setImageResource(R.drawable.ic_baseline_account_box_24);
+                                            dismissProgressDialog();
+
+                                        } else {
+                                            dismissProgressDialog();
+                                            Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                        }
+
+
                                     }
+                                });
+
+                            }
+                        });
+                    }
+                });
+            }else {
+                Toast.makeText(this, "You have to select name and image both", Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
+            }
 
 
-                                }
-                            });
-
-                        }
-                    });
-                }
-            });
-        }else {
-            Toast.makeText(this, "You have to select name and image both", Toast.LENGTH_SHORT).show();
-            dismissProgressDialog();
         }
+
     }
 
     @Override
@@ -441,6 +461,66 @@ else {
             }
         };sizeChartRecyclerView.setAdapter(sizeChartHolder);
         sizeChartHolder.startListening();
+    }
+
+
+
+    public long CheckImageSize(Uri uri) {
+        Cursor returnCursor = null;
+        int sizeIndex = 0;
+
+        if (uri != null) {
+            returnCursor = getContentResolver().query(uri, null, null, null, null);
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+            returnCursor.moveToFirst();
+            Log.e("TAG", "Name:" + returnCursor.getString(nameIndex));
+            Log.e("TAG", "Size: " + Long.toString(returnCursor.getLong(sizeIndex)));
+            //Toast.makeText(this,Long.toString(returnCursor.getLong(sizeIndex)) , Toast.LENGTH_SHORT).show();
+            return returnCursor.getLong(sizeIndex);
+        } else {
+
+            //Toast.makeText(this,"empty" , Toast.LENGTH_SHORT).show();
+            return 200;
+        }
+
+
+    }
+    public boolean isConnected(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
+            return true;
+
+        } else {
+            showDialog();
+            return false;
+        }
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You are not connected to the Internet!")
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_baseline_perm_scan_wifi_24)
+                .setTitle("No Internet Connection!")
+                .setPositiveButton("Go to Setting", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            startActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
+                        }
+                    }
+                })
+                .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.setCancelable(false);
+        alert.show();
     }
 
 

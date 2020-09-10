@@ -16,6 +16,7 @@
         <activity android:name=".Saller_Information" />
         <activity android:name=".SelectItemActivity" />
         <activity android:name=".others_details" />
+        <activity android:name=".Stationery" />
         <activity android:name=".ColorSizeAddingActivity" />
         <activity
             android:name=".UpdateProductDetails"

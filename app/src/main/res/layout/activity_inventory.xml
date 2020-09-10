@@ -174,7 +174,7 @@
     android:id="@+id/uploaded_item_list"
     android:orientation="vertical"
     android:background="#e4e4e4"
-    android:layout_above="@id/addProductsItem"/>
+   />
 
     <RelativeLayout
         android:id="@+id/ownProgressDialog"
@@ -210,7 +210,55 @@
 
     </RelativeLayout>
 
-    <Button
+
+
+
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:id="@+id/addProductsItem"
+        android:onClick="addProducts"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        app:cardElevation="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:padding="10dp"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="30dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/ic_plus"/>
+
+            <TextView
+
+                android:padding="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#fff"
+                android:layout_marginLeft="-10dp"
+                android:textStyle="bold"
+                android:text="Add Items"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+
+
+  <!--  <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -219,6 +267,6 @@
         android:textSize="20sp"
         android:id="@+id/addProductsItem"
         android:onClick="addProducts"
-        android:textColor="#fff"/>
+        android:textColor="#fff"/>-->
 
 </RelativeLayout>

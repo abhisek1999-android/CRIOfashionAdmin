@@ -283,7 +283,7 @@
                 android:hint="Product Id"
                 android:padding="15dp"
                 android:inputType="text"
-                android:digits="0123456789*,qwertzuiopasdfghjklyxcvbnm"
+                android:digits="0123456789*,qwertzuiopasdfghjklyxcvbnm,QWERTZUIOPASDFGHJKLYXCVBNM"
                 />
         </com.google.android.material.textfield.TextInputLayout>
             <EditText
@@ -294,6 +294,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="8dp"
                 android:hint="Package Width"
+                android:inputType="numberDecimal"
                 android:padding="15dp"
                 android:layout_below="@+id/productFor"
                 />
@@ -305,6 +306,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:hint="Package Height"
+                android:inputType="numberDecimal"
                 android:layout_marginTop="10dp"
                 android:padding="15dp"
                 android:layout_below="@+id/packageWidth"
@@ -317,6 +319,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
                 android:hint="Package Weight"
+                android:inputType="numberDecimal"
                 android:padding="15dp"
                 android:layout_below="@+id/packageDepth"
                 />
@@ -328,6 +331,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
                 android:hint="Package Depth"
+                android:inputType="numberDecimal"
                 android:padding="15dp"
                 android:layout_below="@+id/packageHeight"
                 />

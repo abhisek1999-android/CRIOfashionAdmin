@@ -17,20 +17,20 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.naz013.colorslider.ColorSlider;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,39 +51,45 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class others_details extends AppCompatActivity {
+//colors must be added
+public class Stationery extends AppCompatActivity {
     private EditText color_name;
     private EditText size_description;
     private EditText base_material;
-    private EditText product_size;
+    private EditText product_Weight;
     private EditText package_includes;
-    private EditText product_price_max;
-    private EditText product_price_min;
+    private EditText product_price;
+    private EditText customer_price;
     private EditText numberOf_Pieces;
+    private EditText brand_name;
+    private EditText product_highlights;
     private Button submit1;
     private TextView idTextView;
     private DatabaseReference rootReference;
     private EditText product_warranty;
-   //ArrayList<Uri> images;
+    //ArrayList<Uri> images;
     private StorageReference pStorageRef;
-    String validColor="available";
-    ArrayList<Uri> imageViews ;
+
+    private RelativeLayout colorPalat;
+    private RelativeLayout colorRelativeLayout;
+
+    String validColor = "available";
+    ArrayList<Uri> imageViews;
     ArrayList<Uri> images;
     ArrayList<String> downloadUrls;
     private TextView imageTex1, imageTex2, imageTex3, imageTex4, imageTex5, imageTex6;
 
-    Boolean check=false;
-    Boolean stateCheck=true;
-
-
-
-
-    Double volumerticWeight,sellerPrice,customerPrice,finalWeight,finalSellerPrice;
-    Double packageWidth,packageDepth,packageHeight,packageWeight;
+    Double volumerticWeight, sellerPrice, customerPrice, finalWeight, finalSellerPrice;
+    Double packageWidth, packageDepth, packageHeight, packageWeight;
     Double fildPrice;
 
+    Boolean check = false;
+    Boolean stateCheck = true;
 
+
+    TextView colorHexCode;
     int i;
+    String hex;
     int j = 0;
     private String parentItem, childItem, intentItemId;
     private ImageView imageView1, imageView2, imageView3, imageView4, imageView5, imageView6;
@@ -91,23 +97,38 @@ public class others_details extends AppCompatActivity {
     Uri imageUri1, imageUri2, imageUri3, imageUri4, imageUri5, imageUri6;
 
 
+    private ColorSlider.OnColorSelectedListener mListener = new ColorSlider.OnColorSelectedListener() {
+        @Override
+        public void onColorChanged(int position, int color) {
+            updateView(color);
+        }
+    };
+
+    private void updateView(int color) {
+
+        colorRelativeLayout.setBackgroundColor(color);
+        hex = "#" + Integer.toHexString(color).substring(2);
+        colorHexCode.setText(hex);
+
+    }
+
     private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
 
             NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             if (currentNetworkInfo.isConnected()) {
                 if (check) {
-                    stateCheck=true;
-                    Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
-                    View snakBarView=snackbar.getView();
+                    stateCheck = true;
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView = snackbar.getView();
                     snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
                     snackbar.show();
                 }
             } else {
                 check = true;
-                stateCheck=false;
-                Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
-                View snakBarView=snackbar.getView();
+                stateCheck = false;
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView = snackbar.getView();
                 snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
                 snackbar.show();
 
@@ -115,11 +136,11 @@ public class others_details extends AppCompatActivity {
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_others_details);
-
+        setContentView(R.layout.stationery_activity);
 
         getApplicationContext().registerReceiver(mConnReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));//CHECKING CONNECTIVIT
@@ -127,17 +148,23 @@ public class others_details extends AppCompatActivity {
         color_name = findViewById(R.id.colorName);
         size_description = findViewById(R.id.sizeDescription);
         base_material = findViewById(R.id.productFilling);
-        product_size = findViewById(R.id.productSize);
+        product_Weight = findViewById(R.id.productWeight);
         package_includes = findViewById(R.id.packageIncludes);
         submit1 = findViewById(R.id.submitButton1);
-        product_price_max = findViewById(R.id.productPriceMax);
-        product_price_min = findViewById(R.id.productPriceMin);
+        product_price = findViewById(R.id.productPrice);
+        product_highlights = findViewById(R.id.productHighlights);
+        customer_price = findViewById(R.id.customerPrice);
         numberOf_Pieces = findViewById(R.id.numberOfPieces);
         idTextView = findViewById(R.id.copyId);
+        brand_name = findViewById(R.id.brandName);
         product_warranty = findViewById(R.id.productWarranty);
         rootReference = FirebaseDatabase.getInstance().getReference();
         pStorageRef = FirebaseStorage.getInstance().getReference();
         intentItemId = getIntent().getStringExtra("itemId");
+        colorRelativeLayout = findViewById(R.id.colorRelativeLayout);
+        colorPalat = findViewById(R.id.colorPalates);
+        colorHexCode = findViewById(R.id.colorTextCode);
+
 
         imageTex1 = findViewById(R.id.text1);
         imageTex2 = findViewById(R.id.text2);
@@ -148,7 +175,7 @@ public class others_details extends AppCompatActivity {
 
         images = new ArrayList<>();
         imageViews = new ArrayList<>();
-        downloadUrls=new ArrayList<>();
+        downloadUrls = new ArrayList<>();
 
         idTextView.setText("Product Id: " + intentItemId);
 
@@ -156,39 +183,44 @@ public class others_details extends AppCompatActivity {
         childItem = getIntent().getStringExtra("childCategory");
 
 
+        if (childItem.equals("Ladies Purse")) {
+            colorPalat.setVisibility(View.VISIBLE);
+        }
+        customer_price.setEnabled(false);
 
-        product_price_min.setEnabled(false);
-
-        rootReference.child("products/"+intentItemId+"/package_details/").addValueEventListener(new ValueEventListener() {
+        rootReference.child("products/" + intentItemId + "/package_details/").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
 
-                    PackageDetails packageDetails=dataSnapshot.getValue(PackageDetails.class);
+                    PackageDetails packageDetails = dataSnapshot.getValue(PackageDetails.class);
                     assert packageDetails != null;
-                    packageDepth= Double.parseDouble(packageDetails.getPackage_depth());
-                    packageHeight= Double.parseDouble(packageDetails.getPackage_height());
-                    packageWidth= Double.parseDouble(packageDetails.getPackage_width());
-                    packageWeight= Double.parseDouble(packageDetails.getWeight());
-                    volumerticWeight=(packageDepth*packageHeight*packageWidth)/4000;
+                    packageDepth = Double.parseDouble(packageDetails.getPackage_depth());
+                    packageHeight = Double.parseDouble(packageDetails.getPackage_height());
+                    packageWidth = Double.parseDouble(packageDetails.getPackage_width());
+                    packageWeight = Double.parseDouble(packageDetails.getWeight());
+                    volumerticWeight = (packageDepth * packageHeight * packageWidth) / 4000;
 
-                }else {
-                    Toast.makeText(others_details.this, "some error occurred1", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(Stationery.this, "some error occurred1", Toast.LENGTH_SHORT).show();
                 }
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(others_details.this, "some error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Stationery.this, "some error occurred", Toast.LENGTH_SHORT).show();
             }
         });
 
 
+        ColorSlider slider = findViewById(R.id.color_slider);
+        slider.setSelectorColor(Color.GREEN);
+        slider.setListener(mListener);
 
-
-
-
+        ColorSlider sliderGradientArray = findViewById(R.id.color_slider_gradient_array);
+        sliderGradientArray.setGradient(new int[]{Color.MAGENTA, Color.parseColor("#561571"), Color.parseColor("#1c2566"), Color.BLUE, Color.CYAN, Color.parseColor("#00352c"), Color.GREEN, Color.YELLOW, Color.RED, Color.BLACK, Color.WHITE}, 300);
+        sliderGradientArray.setListener(mListener);
 
 
         // check the first upload is success or not
@@ -201,18 +233,19 @@ public class others_details extends AppCompatActivity {
 
                     Products products = dataSnapshot.getValue(Products.class);
                     base_material.setText(products.getBase_material());
-
+                    brand_name.setText(products.getBrand_name());
                     product_warranty.setText(products.getWarranty_description());
                     package_includes.setText(products.getPackage_includes());
 
                     base_material.setEnabled(false);
                     package_includes.setEnabled(false);
                     product_warranty.setEnabled(false);
+                    brand_name.setEnabled(false);
 
                 } else {
 
 
-                    Toast.makeText(others_details.this, "no match", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "no match", Toast.LENGTH_SHORT).show();
 
 
                 }
@@ -247,7 +280,7 @@ public class others_details extends AppCompatActivity {
                     gallery1.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery1, "Select Image2"), 2);
                 } else {
-                    Toast.makeText(others_details.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -262,7 +295,7 @@ public class others_details extends AppCompatActivity {
                     startActivityForResult(Intent.createChooser(gallery2, "Select Image3"), 3);
 
                 } else {
-                    Toast.makeText(others_details.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -278,7 +311,7 @@ public class others_details extends AppCompatActivity {
                     gallery3.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery3, "Select Image3"), 4);
                 } else {
-                    Toast.makeText(others_details.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -297,7 +330,7 @@ public class others_details extends AppCompatActivity {
                     gallery4.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery4, "Select Image3"), 5);
                 } else {
-                    Toast.makeText(others_details.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -315,7 +348,7 @@ public class others_details extends AppCompatActivity {
                     gallery5.setType("image/*");
                     startActivityForResult(Intent.createChooser(gallery5, "Select Image3"), 6);
                 } else {
-                    Toast.makeText(others_details.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "Select Previous Image First", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -323,26 +356,23 @@ public class others_details extends AppCompatActivity {
         });
 
 
-
-
-
-              product_size.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//validing color name
+        product_Weight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
-                if (!color_name.getText().toString().equals("")){
+                if (!product_Weight.getText().toString().equals("")) {
 
-                    if(!hasFocus){
-                        rootReference.child("products").child(intentItemId).child("color_details").child(color_name.getText().toString()).child("size").addListenerForSingleValueEvent(new ValueEventListener() {
+                    if (!hasFocus) {
+                        rootReference.child("products").child(intentItemId).child("color_details").child(product_Weight.getText().toString()).child("size").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild(product_size.getText().toString())){
-                                    product_size.setError("This size Already available for this color");
-                                    validColor="not_available";
-                                }
-                                else {
+                                if (dataSnapshot.hasChild(color_name.getText().toString())) {
+                                    color_name.setError("This weight Already available for this color");
+                                    validColor = "not_available";
+                                } else {
                                     // Toast.makeText(MainActivity.this, productId.getEditText().getText().toString()+seller_id, Toast.LENGTH_SHORT).show();
-                                    validColor="available";
+                                    validColor = "available";
                                 }
                             }
 
@@ -352,9 +382,10 @@ public class others_details extends AppCompatActivity {
                             }
                         });
 
-                    }  else {
-                        Toast.makeText(others_details.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
                     }
+
+                } else {
+                    Toast.makeText(Stationery.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -362,27 +393,24 @@ public class others_details extends AppCompatActivity {
         });
 
 
-
-
-
-
         submit1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-            if (stateCheck){ Datasubmit();}
-
+                if (stateCheck) {
+                    Datasubmit();
+                }
 
 
             }
         });
 
 
-        product_price_max.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        product_price.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!product_price_max.getText().toString().equals("")){
-                    product_price_min.setText(String.valueOf(generateCustomerPrice()));
+                if (!product_price.getText().toString().equals("")) {
+                    customer_price.setText(String.valueOf(generateCustomerPrice()));
 
                 }
             }
@@ -459,36 +487,33 @@ public class others_details extends AppCompatActivity {
     public void Datasubmit() {
 
 
-
         Long sizeImage1 = CheckImageSize(imageUri1) / 1024;
         images.removeAll(images);
         imageViews.removeAll(imageViews);
         downloadUrls.removeAll(downloadUrls);
 
         if (imageUri1 != null & sizeImage1 > 500) {
-                imageViews.add(imageUri1);
+            imageViews.add(imageUri1);
         }
         if (imageUri2 != null & (CheckImageSize(imageUri2) / 1024) > 500) {
             imageViews.add(imageUri2);
         }
-        if (imageUri3 != null  & (CheckImageSize(imageUri3) / 1024) > 500) {
+        if (imageUri3 != null & (CheckImageSize(imageUri3) / 1024) > 500) {
             imageViews.add(imageUri3);
         }
-        if (imageUri4 != null  & (CheckImageSize(imageUri4) / 1024) > 500) {
+        if (imageUri4 != null & (CheckImageSize(imageUri4) / 1024) > 500) {
             imageViews.add(imageUri4);
         }
-        if (imageUri5 != null  & (CheckImageSize(imageUri5) / 1024) > 500) {
+        if (imageUri5 != null & (CheckImageSize(imageUri5) / 1024) > 500) {
             imageViews.add(imageUri5);
         }
-        if (imageUri6 != null  & (CheckImageSize(imageUri6) / 1024) > 500) {
+        if (imageUri6 != null & (CheckImageSize(imageUri6) / 1024) > 500) {
             imageViews.add(imageUri6);
         }
 
 
-
-
-
         if (imageUri1 != null) {
+
             if (sizeImage1 < 500) {
                 images.add(imageUri1);
                 imageTex1.setText("image 1");
@@ -555,64 +580,65 @@ public class others_details extends AppCompatActivity {
 
             }
         }
-
-        if (color_name.getText().toString().equals("") | size_description.getText().toString().equals("")
-                | product_size.getText().toString().equals("") | base_material.getText().toString().equals("") |
-                product_price_max.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("")
-                | product_price_min.getText().toString().equals("") | images.size() == 0) {
-
-            Toast.makeText(getApplicationContext(), "Some Fields Are Empty", Toast.LENGTH_SHORT).show();
-            dismissProgressDialog();
-
+        if (childItem.equals("Ladies Purse") & colorHexCode.getText().toString().equals("")) {
+            Toast.makeText(this, "Select any color", Toast.LENGTH_SHORT).show();
         } else {
-            if (validColor.equals("available")){
 
-                if (imageViews.size()>0) {
+            if (color_name.getText().toString().equals("") | size_description.getText().toString().equals("")
+                    | product_Weight.getText().toString().equals("") | base_material.getText().toString().equals("") |
+                    product_price.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("") | images.size() == 0 | product_highlights.getText().toString().equals("")) {
 
+                Toast.makeText(getApplicationContext(), "Some Fields Are Empty", Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
 
-                    imageViews.removeAll(imageViews);
-                    AlertDialog alertbox = new AlertDialog.Builder(this)
-                            .setTitle("Are you Sure?")
-                            .setIcon(R.drawable.ic_baseline_warning_24)
-                            .setMessage("Some images are not less then 150 kb, this images are not going to be uploaded.\n Are you sure?")
-                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            } else {
+                if (validColor.equals("available")) {
 
-                                public void onClick(DialogInterface arg0, int arg1) {
-
-                                    //Toast.makeText(others_details.this, "images"+String.valueOf(images.size())+" imageViews"+String.valueOf(imageViews.size()), Toast.LENGTH_SHORT).show();
-                                    startUpload();
-                                    showProgressDialog();
-                                }
-                            })
-                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dismissProgressDialog();
-                                }
-                            })
-                            .setCancelable(false)
-                            .show();
+                    if (imageViews.size() > 0) {
 
 
+                        imageViews.removeAll(imageViews);
+                        AlertDialog alertbox = new AlertDialog.Builder(this)
+                                .setTitle("Are you Sure?")
+                                .setIcon(R.drawable.ic_baseline_warning_24)
+                                .setMessage("Some images are not less then 150 kb, this images are not going to be uploaded.\n Are you sure?")
+                                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface arg0, int arg1) {
+
+                                        //Toast.makeText(Stationery.this, "images"+String.valueOf(images.size())+" imageViews"+String.valueOf(imageViews.size()), Toast.LENGTH_SHORT).show();
+                                        startUpload();
+                                        showProgressDialog();
+                                    }
+                                })
+                                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dismissProgressDialog();
+                                    }
+                                })
+                                .setCancelable(false)
+                                .show();
+
+
+                    } else {
+
+
+                        imageViews.removeAll(imageViews);
+
+                        Toast.makeText(Stationery.this, "else = images" + String.valueOf(images.size()) + " imageViews" + String.valueOf(imageViews.size()), Toast.LENGTH_SHORT).show();
+                        startUpload();
+                        showProgressDialog();
+
+                    }
+
+
+                } else {
+                    Toast.makeText(this, "Color name Already exists!", Toast.LENGTH_SHORT).show();
                 }
-                else {
 
 
-                    imageViews.removeAll(imageViews);
-
-                    Toast.makeText(others_details.this, "else = images"+String.valueOf(images.size())+" imageViews"+String.valueOf(imageViews.size()), Toast.LENGTH_SHORT).show();
-                    startUpload();
-                    showProgressDialog();
-
-                }
-
-
-            }else {
-                Toast.makeText(this, "Size Already exists!", Toast.LENGTH_SHORT).show();
             }
-
-
-
         }
 
 
@@ -626,29 +652,36 @@ public class others_details extends AppCompatActivity {
 
         final Map colorMap = new HashMap();
         colorMap.put("color_name", color_name.getText().toString());
-        colorMap.put("color_code", "#020729");
+
+        if (childItem.equals("Ladies Purse")) {
+            colorMap.put("color_code", colorHexCode.getText().toString());
+        } else {
+            colorMap.put("color_code", "#020729");
+
+        }
+        colorMap.put("product_highlights", product_highlights.getText().toString());
 
         final String colorname = color_name.getText().toString();
         String sizedescription = size_description.getText().toString();
-        final String baseMaterial = base_material.getText().toString();
-        final String procuctSize = product_size.getText().toString();
-        final String packageincludes = package_includes.getText().toString();
-        String productPriceMax = product_price_max.getText().toString();
-        String productPriceMin = product_price_min.getText().toString();
+        String baseMaterial = base_material.getText().toString();
+        final String procuctWeight = product_Weight.getText().toString();
+        String packageincludes = package_includes.getText().toString();
+        String productPrice = product_price.getText().toString();
+        String customerPrice = customer_price.getText().toString();
         String numberOfPieces = numberOf_Pieces.getText().toString();
         String productWarranty = product_warranty.getText().toString();
-
-
+        String brandName = brand_name.getText().toString();
         Map otherDetailsProductHashMap = new HashMap();
         otherDetailsProductHashMap.put("size_description", sizedescription);
         otherDetailsProductHashMap.put("base_material", baseMaterial);
         otherDetailsProductHashMap.put("package_includes", packageincludes);
         otherDetailsProductHashMap.put("warranty_description", productWarranty);
+        otherDetailsProductHashMap.put("brand_name", brandName);
 
         final Map sizedetailsMap = new HashMap();
-        sizedetailsMap.put("size", procuctSize);
-        sizedetailsMap.put("max_price", Double.parseDouble(productPriceMax.trim()));
-        sizedetailsMap.put("min_price", Double.parseDouble(productPriceMin.trim()));
+        sizedetailsMap.put("size", procuctWeight);
+        sizedetailsMap.put("min_price", Double.parseDouble(productPrice.trim()));
+        sizedetailsMap.put("max_price", Double.parseDouble(customerPrice.trim())); //have to add the calculated price
         sizedetailsMap.put("pieces", Double.parseDouble(numberOfPieces.trim()));
 
         rootReference.child("products").child(intentItemId).updateChildren(otherDetailsProductHashMap, new DatabaseReference.CompletionListener() {
@@ -659,26 +692,26 @@ public class others_details extends AppCompatActivity {
                     rootReference.child(colorPathString).updateChildren(colorMap, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                            if (databaseError==null){
-                                rootReference.child(sizePathString + procuctSize).updateChildren(sizedetailsMap, new DatabaseReference.CompletionListener() {
+
+                            if (databaseError == null) {
+
+                                rootReference.child(sizePathString + procuctWeight).updateChildren(sizedetailsMap, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                        Toast.makeText(others_details.this, "Done", Toast.LENGTH_SHORT).show();
-
+                                        Toast.makeText(Stationery.this, "Done", Toast.LENGTH_SHORT).show();
+                                        size_description.setEnabled(false);
                                         base_material.setEnabled(false);
                                         package_includes.setEnabled(false);
                                         product_warranty.setEnabled(false);
+                                        brand_name.setEnabled(false);
+
                                         uploadImage(colorname);
                                     }
                                 });
+                            }
 
-                            }
-                            else {
-                                Toast.makeText(others_details.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
-                            }
                         }
                     });
-
                 }
             }
         });
@@ -755,14 +788,12 @@ public class others_details extends AppCompatActivity {
                 if (databaseError == null) {
 
 
-
                     imageView1.setImageResource(R.drawable.ic_baseline_account_box_24);
                     imageView2.setImageResource(R.drawable.ic_baseline_account_box_24);
                     imageView3.setImageResource(R.drawable.ic_baseline_account_box_24);
                     imageView4.setImageResource(R.drawable.ic_baseline_account_box_24);
                     imageView5.setImageResource(R.drawable.ic_baseline_account_box_24);
                     imageView6.setImageResource(R.drawable.ic_baseline_account_box_24);
-
 
 
                     imageTex1.setText("image1");
@@ -773,17 +804,15 @@ public class others_details extends AppCompatActivity {
                     imageTex6.setText("image6");
 
 
-
-
                     rootReference.child("products").child(intentItemId).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            if (!dataSnapshot.hasChild("thumb_image")){
-                                if (downloadUrls.get(0)!=null){
+                            if (!dataSnapshot.hasChild("thumb_image")) {
+                                if (downloadUrls.get(0) != null) {
 
-                                    Map thumbImageMap=new HashMap();
-                                    thumbImageMap.put("thumb_image",downloadUrls.get(0));
+                                    Map thumbImageMap = new HashMap();
+                                    thumbImageMap.put("thumb_image", downloadUrls.get(0));
 
                                     rootReference.child("products").child(intentItemId).updateChildren(thumbImageMap, new DatabaseReference.CompletionListener() {
                                         @Override
@@ -794,9 +823,9 @@ public class others_details extends AppCompatActivity {
                                     });
                                 }
 
-                            }else {
+                            } else {
                                 statusCheck();
-                               // dismissProgressDialog();
+                                // dismissProgressDialog();
                             }
 
                         }
@@ -804,13 +833,13 @@ public class others_details extends AppCompatActivity {
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            Toast.makeText(others_details.this, "some error occurred", Toast.LENGTH_SHORT).show();
-                           dismissProgressDialog();
+                            Toast.makeText(Stationery.this, "some error occurred", Toast.LENGTH_SHORT).show();
+                            dismissProgressDialog();
                         }
                     });
 
                     dismissProgressDialog();
-                    Toast.makeText(others_details.this, "done", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "done", Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -830,7 +859,7 @@ public class others_details extends AppCompatActivity {
                 if (databaseError == null) {
                     Log.i("done", "done");
                 } else {
-                    Toast.makeText(others_details.this, "Error occurred for updateing status.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Stationery.this, "Error occurred for updateing status.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -884,7 +913,7 @@ public class others_details extends AppCompatActivity {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(others_details.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Stationery.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -902,78 +931,6 @@ public class others_details extends AppCompatActivity {
                 .show();
 
     }
-
-
-
-
-    public Double generateCustomerPrice(){
-
-        fildPrice= Double.parseDouble(product_price_max.getText().toString());
-
-
-          sellerPrice=fildPrice+((fildPrice*6)/100);
-          finalSellerPrice=sellerPrice;
-
-          if (packageWeight>volumerticWeight)
-              finalWeight=packageWeight;
-          else
-              finalWeight=volumerticWeight;
-
-
-
-          if (finalWeight<0.5){
-
-              if (sellerPrice<500){
-                  finalSellerPrice+=80;
-              }
-              else if (sellerPrice>=500 && sellerPrice<1000){
-                  finalSellerPrice+=100;
-              }
-              else
-                  finalSellerPrice+=120;
-
-          }
-
-          else if (finalWeight>=0.5 && finalWeight <1){
-
-              if (sellerPrice<500){
-                  finalSellerPrice+=100;
-              }
-              else if (sellerPrice>=500 && sellerPrice<1000){
-                  finalSellerPrice+=130;
-              }
-              else
-                  finalSellerPrice+=200;
-
-          }
-          else if (finalWeight>=1 && finalWeight <1.5){
-
-              if (sellerPrice<1000){
-                  finalSellerPrice+=150;
-              }
-              else if (sellerPrice>=1000 && sellerPrice<2000){
-                  finalSellerPrice+=200;
-              }
-              else
-                  finalSellerPrice+=300;
-
-          }
-
-          if (parentItem.equals("Home Accessories")){
-              customerPrice=finalSellerPrice+(finalSellerPrice*18/100);
-          }
-        if (parentItem.equals("Furniture")){
-            customerPrice=finalSellerPrice+(finalSellerPrice*12/100);
-        }
-
-        return Math.ceil(customerPrice);
-
-    }
-
-
-
-
-
 
 
     //check the size of an image......................
@@ -1002,7 +959,7 @@ public class others_details extends AppCompatActivity {
     public void showProgressDialog() {
 
         if (progressDialog == null) {
-            progressDialog = new ProgressDialog(others_details.this);
+            progressDialog = new ProgressDialog(Stationery.this);
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(false);
         }
@@ -1017,43 +974,62 @@ public class others_details extends AppCompatActivity {
         }
     }
 
+    public Double generateCustomerPrice() {
+
+        fildPrice = Double.parseDouble(product_price.getText().toString());
 
 
-    public boolean isConnected(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        sellerPrice = fildPrice + ((fildPrice * 6) / 100);
+        finalSellerPrice = sellerPrice;
 
-        if ((wifiInfo != null && wifiInfo.isConnected()) || (mobileInfo != null && mobileInfo.isConnected())) {
-            return true;
+        if (packageWeight > volumerticWeight)
+            finalWeight = packageWeight;
+        else
+            finalWeight = volumerticWeight;
 
-        } else {
-            showDialog();
-            return false;
+
+        if (finalWeight < 0.5) {
+
+            if (sellerPrice < 500) {
+                finalSellerPrice += 80;
+            } else if (sellerPrice >= 500 && sellerPrice < 1000) {
+                finalSellerPrice += 100;
+            } else
+                finalSellerPrice += 120;
+
+        } else if (finalWeight >= 0.5 && finalWeight < 1) {
+
+            if (sellerPrice < 500) {
+                finalSellerPrice += 100;
+            } else if (sellerPrice >= 500 && sellerPrice < 1000) {
+                finalSellerPrice += 130;
+            } else
+                finalSellerPrice += 200;
+
+        } else if (finalWeight >= 1 && finalWeight < 1.5) {
+
+            if (sellerPrice < 1000) {
+                finalSellerPrice += 150;
+            } else if (sellerPrice >= 1000 && sellerPrice < 2000) {
+                finalSellerPrice += 200;
+            } else
+                finalSellerPrice += 300;
+
         }
+
+        if (childItem.equals("Sunglasses")) {
+            customerPrice = finalSellerPrice + (finalSellerPrice * 28 / 100);
+        }
+
+        if (parentItem.equals("Stationary")) {
+            customerPrice = finalSellerPrice + (finalSellerPrice * 12 / 100);
+        }
+        if (parentItem.equals("Fashion Accessories") && !childItem.equals("Sunglasses")) {
+            customerPrice = finalSellerPrice + (finalSellerPrice * 18 / 100);
+        }
+        return Math.ceil(customerPrice);
+
     }
 
-    private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("You are not connected to the Internet!")
-                .setCancelable(false)
-                .setIcon(R.drawable.ic_baseline_perm_scan_wifi_24)
-                .setTitle("No Internet Connection!")
-                .setPositiveButton("Go to Setting", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                            startActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
-                        }
-                    }
-                })
-                .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        finish();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.setCancelable(false);
-        alert.show();
-    }
 
 }

@@ -6,11 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,12 +81,45 @@ public class Jewellery extends AppCompatActivity {
     Uri imageUri1, imageUri2, imageUri3, imageUri4, imageUri5, imageUri6;
 
     String validColor="available";
+    Boolean check=false;
+    Boolean stateCheck=true;
 
+    Double volumerticWeight,sellerPrice,customerPrice,finalWeight,finalSellerPrice;
+    Double packageWidth,packageDepth,packageHeight,packageWeight;
+    Double fildPrice;
+
+    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (currentNetworkInfo.isConnected()) {
+                if (check) {
+                    stateCheck=true;
+                    Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView=snackbar.getView();
+                    snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
+                    snackbar.show();
+                }
+            } else {
+                check = true;
+                stateCheck=false;
+                Snackbar snackbar=Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView=snackbar.getView();
+                snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
+                snackbar.show();
+
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jewellery);
+
+        getApplicationContext().registerReceiver(mConnReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));//CHECKING CONNECTIVITY
+
         images = new ArrayList<>();
         colorName = findViewById(R.id.colorName);
         sizeDescription = findViewById(R.id.sizeDescription);
@@ -116,6 +155,35 @@ public class Jewellery extends AppCompatActivity {
 
         parentItem = getIntent().getStringExtra("parentCategory");
         childItem = getIntent().getStringExtra("childCategory");
+
+
+
+        product_price_min.setEnabled(false);
+
+        rootReference.child("products/"+intentItemId+"/package_details/").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+
+                    PackageDetails packageDetails=dataSnapshot.getValue(PackageDetails.class);
+                    assert packageDetails != null;
+                    packageDepth= Double.parseDouble(packageDetails.getPackage_depth());
+                    packageHeight= Double.parseDouble(packageDetails.getPackage_height());
+                    packageWidth= Double.parseDouble(packageDetails.getPackage_width());
+                    packageWeight= Double.parseDouble(packageDetails.getWeight());
+                    volumerticWeight=(packageDepth*packageHeight*packageWidth)/4000;
+
+                }else {
+                    Toast.makeText(Jewellery.this, "some error occurred1", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Jewellery.this, "some error occurred", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 // check the first upload is success or not
@@ -248,13 +316,23 @@ public class Jewellery extends AppCompatActivity {
         });
 
 
+        product_price_max.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!product_price_max.getText().toString().equals("")){
+                    product_price_min.setText(String.valueOf(generateCustomerPrice()));
 
+                }
+            }
+        });
 
 
         submit2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Datasubmit();
+
+                if (stateCheck){ Datasubmit();}
+
             }
         });
     }
@@ -340,19 +418,19 @@ public class Jewellery extends AppCompatActivity {
         imageViews.removeAll(imageViews);
         downloadUrls.removeAll(downloadUrls);
 
-        if (imageUri1 != null & sizeImage1 > 160) {
+        if (imageUri1 != null & sizeImage1 > 500) {
             imageViews.add(imageUri1);
         }
-        if (imageUri2 != null & (CheckImageSize(imageUri2) / 1024) > 160) {
+        if (imageUri2 != null & (CheckImageSize(imageUri2) / 1024) > 500) {
             imageViews.add(imageUri2);
         }
-        if (imageUri3 != null  & (CheckImageSize(imageUri3) / 1024) > 160) {
+        if (imageUri3 != null  & (CheckImageSize(imageUri3) / 1024) > 500) {
             imageViews.add(imageUri3);
         }
 
 
         if (imageUri1 != null) {
-            if (sizeImage1 < 160) {
+            if (sizeImage1 < 500) {
                 images.add(imageUri1);
                 imageTex1.setText("image 1");
             } else {
@@ -363,7 +441,7 @@ public class Jewellery extends AppCompatActivity {
         }
 
         if (imageUri2 != null) {
-            if ((CheckImageSize(imageUri2) / 1024) < 160) {
+            if ((CheckImageSize(imageUri2) / 1024) < 500) {
                 images.add(imageUri2);
                 imageTex2.setText("image 2");
 
@@ -376,7 +454,7 @@ public class Jewellery extends AppCompatActivity {
 
         if (imageUri3 != null) {
 
-            if ((CheckImageSize(imageUri3) / 1024) < 160) {
+            if ((CheckImageSize(imageUri3) / 1024) < 500) {
                 images.add(imageUri3);
                 imageTex3.setText("image 3");
             } else {
@@ -470,9 +548,9 @@ public class Jewellery extends AppCompatActivity {
 
         final Map weightdetailsMap = new HashMap();
         weightdetailsMap.put("jewellery_weight", jewelleryweight);
-        weightdetailsMap.put("max_price", Long.parseLong(productPriceMax.trim()));
-        weightdetailsMap.put("min_price", Long.parseLong(productPriceMin.trim()));
-        weightdetailsMap.put("pieces", Long.parseLong(numberOfPieces.trim()));
+        weightdetailsMap.put("max_price", Double.parseDouble(productPriceMax.trim()));
+        weightdetailsMap.put("min_price", Double.parseDouble(productPriceMin.trim()));
+        weightdetailsMap.put("pieces", Double.parseDouble(numberOfPieces.trim()));
         weightdetailsMap.put("size", sizedescription);
 
 
@@ -923,4 +1001,72 @@ public class Jewellery extends AppCompatActivity {
 
 
     }
+
+
+    public Double generateCustomerPrice(){
+
+        fildPrice= Double.parseDouble(product_price_max.getText().toString());
+
+
+        sellerPrice=fildPrice+((fildPrice*6)/100);
+        finalSellerPrice=sellerPrice;
+
+        if (packageWeight>volumerticWeight)
+            finalWeight=packageWeight;
+        else
+            finalWeight=volumerticWeight;
+
+
+
+        if (finalWeight<0.5){
+
+            if (sellerPrice<500){
+                finalSellerPrice+=80;
+            }
+            else if (sellerPrice>=500 && sellerPrice<1000){
+                finalSellerPrice+=100;
+            }
+            else
+                finalSellerPrice+=120;
+
+        }
+
+        else if (finalWeight>=0.5 && finalWeight <1){
+
+            if (sellerPrice<500){
+                finalSellerPrice+=100;
+            }
+            else if (sellerPrice>=500 && sellerPrice<1000){
+                finalSellerPrice+=130;
+            }
+            else
+                finalSellerPrice+=200;
+
+        }
+        else if (finalWeight>=1 && finalWeight <1.5){
+
+            if (sellerPrice<1000){
+                finalSellerPrice+=150;
+            }
+            else if (sellerPrice>=1000 && sellerPrice<2000){
+                finalSellerPrice+=200;
+            }
+            else
+                finalSellerPrice+=300;
+
+        }
+
+        if (parentItem.equals("Home Accessories")){
+            customerPrice=finalSellerPrice+(finalSellerPrice*18/100);
+        }
+        if (parentItem.equals("Furniture")){
+            customerPrice=finalSellerPrice+(finalSellerPrice*12/100);
+        }
+
+        return Math.ceil(customerPrice);
+
+    }
+
+
+
 }
