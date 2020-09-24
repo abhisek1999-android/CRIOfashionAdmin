@@ -20,6 +20,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textView"
                 android:layout_centerHorizontal="true"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginLeft="15dp"
                 android:text="Product Details"
                 android:textSize="30dp"
@@ -30,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/copyId"
                 android:layout_alignParentLeft="true"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginLeft="15dp"
                 android:text="Product Id : AB000CD"
                 android:textSize="25dp"
@@ -40,6 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="20dp"
                 android:text="Product's Colour Name*:"
@@ -54,7 +57,6 @@
                 android:padding="15dp"
                 android:layout_below="@id/textView0"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/button_background"
                 android:layout_marginRight="30dp" />
 
             <TextView
@@ -64,6 +66,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/colorName"
                 android:layout_marginLeft="15dp"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginTop="5dp"
                 android:text="Product Size Description*: "
                 android:textSize="20dp"/>
@@ -75,7 +78,6 @@
                 android:layout_marginLeft="10dp"
                 android:padding="15dp"
                 android:layout_marginRight="30dp"
-                android:background="@drawable/button_background"
                 android:lines="4"/>
             <TextView
                 android:id="@+id/textView2"
@@ -83,6 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/sizeDescription"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginLeft="15dp"
                 android:text="Base Material*: "
                 android:textSize="20dp"
@@ -96,7 +99,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textView2"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/button_background"
                 android:padding="15dp"
                 android:layout_marginRight="30dp"/>
 
@@ -108,6 +110,7 @@
                 android:layout_below="@+id/baseMaterial"
                 android:layout_marginLeft="15dp"
                 android:text="Jewellery Plating*:"
+                android:fontFamily="@font/futurapt_font"
                 android:textSize="20dp"
                 android:layout_marginTop="5dp"/>
 
@@ -119,7 +122,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textView20"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/button_background"
                 android:padding="15dp"
                 android:layout_marginRight="30dp"/>
             <TextView
@@ -130,6 +132,7 @@
                 android:layout_below="@+id/productPlating"
                 android:layout_marginLeft="15dp"
                 android:text="Warranty Description: "
+                android:fontFamily="@font/futurapt_font"
                 android:textSize="20dp"
                 android:layout_marginTop="5dp"/>
 
@@ -141,7 +144,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textView22"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/button_background"
                 android:padding="15dp"
                 android:layout_marginRight="30dp"/>
 
@@ -155,6 +157,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/productWarranty"
                 android:layout_marginLeft="15dp"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginTop="5dp"
                 android:text="Package Includes: "
                 android:textSize="20dp"/>
@@ -164,7 +167,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textView3"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/button_background"
                 android:padding="15dp"
                 android:layout_marginRight="30dp"/>
 
@@ -177,6 +179,7 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="5dp"
                 android:text="Jewellery Weight*: "
+                android:fontFamily="@font/futurapt_font"
                 android:textSize="20dp"/>
 
             <EditText
@@ -186,28 +189,30 @@
                 android:layout_below="@id/textView9"
                 android:layout_marginLeft="10dp"
                 android:hint="Product Size(Eg: 100g)"
-                android:background="@drawable/button_background"
+                android:fontFamily="@font/futurapt_font"
                 android:padding="15dp"
+                android:digits="0123456789*,qwertzuiopasdfghjklyxcvbnm,QWERTZUIOPASDFGHJKLYXCVBNM"
                 android:layout_marginRight="30dp"/>
 
             <EditText
                 android:id="@+id/productPriceMax"
                 android:layout_width="110dp"
-                android:layout_height="wrap_content"
+                android:layout_height="75dp"
                 android:layout_below="@id/productWeight"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/futurapt_font"
                 android:background="@drawable/button_background"
-                android:hint="Max Price"
+                android:hint="'Price"
                 android:inputType="numberDecimal"
                 android:padding="15dp"
                 android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/productPriceMin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="110dp"
+                android:layout_height="75dp"
                 android:layout_below="@id/productWeight"
 
                 android:layout_marginEnd="7dp"
@@ -215,8 +220,9 @@
                 android:layout_marginTop="20dp"
                 android:layout_toEndOf="@+id/productPriceMax"
                 android:layout_toStartOf="@+id/numberOfPieces"
+                android:fontFamily="@font/futurapt_font"
                 android:background="@drawable/button_background"
-                android:hint="Min Price"
+                android:hint="Customer\nPrice"
                 android:inputType="numberDecimal"
                 android:padding="15dp"
                 android:textAlignment="center" />
@@ -224,8 +230,9 @@
             <EditText
                 android:id="@+id/numberOfPieces"
            android:layout_width="110dp"
-                android:layout_height="wrap_content"
+                android:layout_height="75dp"
                 android:layout_below="@id/productWeight"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_alignParentRight="true"
                 android:hint="Pieces"
                 android:inputType="numberDecimal"
@@ -251,10 +258,11 @@
                 android:layout_below="@id/Image1"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="30dp"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginTop="-40dp"
                 android:text="Image1"
                 android:textSize="20sp"
-                android:textStyle="italic" />
+                android:textStyle="bold" />
 
 
             <ImageView
@@ -276,7 +284,8 @@
                 android:gravity="center"
                 android:text="Image2"
                 android:textSize="20sp"
-                android:textStyle="italic" />
+                android:fontFamily="@font/futurapt_font"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/Image3"
@@ -294,10 +303,11 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="-40dp"
                 android:layout_marginRight="40dp"
+                android:fontFamily="@font/futurapt_font"
                 android:gravity="left"
                 android:text="Image3"
                 android:textSize="20sp"
-                android:textStyle="italic" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView23"
@@ -306,6 +316,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/text1"
                 android:layout_marginLeft="27dp"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginRight="40dp"
                 android:layout_marginTop="15dp"
                 android:gravity="left"
@@ -328,6 +339,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="-40dp"
+                android:fontFamily="@font/futurapt_font"
                 android:text="Image4"
                 android:textSize="20sp"
                 android:textStyle="italic" />
@@ -346,6 +358,7 @@
                 android:layout_below="@id/Image5"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="40dp"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginTop="-40dp"
                 android:text="Image5"
                 android:textSize="20sp"
@@ -364,6 +377,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/Image6"
                 android:layout_alignParentLeft="true"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="-40dp"
                 android:text="Image6"
@@ -377,6 +391,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/textView23"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginRight="83dp"
                 android:layout_marginTop="5dp"
                 android:text="Product Description: "
@@ -402,6 +417,7 @@
                 android:layout_below="@+id/Image4"
                 android:layout_marginRight="83dp"
                 android:layout_marginTop="5dp"
+                android:fontFamily="@font/futurapt_font"
                 android:text="Product Description: "
                 android:textSize="20dp" />
 
@@ -425,6 +441,7 @@
                 android:layout_below="@+id/Image5"
                 android:layout_marginRight="83dp"
                 android:layout_marginTop="5dp"
+                android:fontFamily="@font/futurapt_font"
                 android:text="Product Description: "
                 android:textSize="20dp" />
 

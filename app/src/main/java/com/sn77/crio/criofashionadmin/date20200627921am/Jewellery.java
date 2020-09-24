@@ -115,6 +115,7 @@ public class Jewellery extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Add Details");
         setContentView(R.layout.activity_jewellery);
 
         getApplicationContext().registerReceiver(mConnReceiver,
@@ -331,7 +332,9 @@ public class Jewellery extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (stateCheck){ Datasubmit();}
+                if (stateCheck){ Datasubmit();}else {
+                    Toast.makeText(Jewellery.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -924,6 +927,8 @@ public class Jewellery extends AppCompatActivity {
                     if (dataSnapshot.hasChild("base_material")) {
                         Log.i("msg", "msg");
                         finish();
+                        //Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                       // startActivity(intent);
                     } else {
                         exitByBackKey();
 
@@ -957,6 +962,8 @@ public class Jewellery extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 finish();
+                                Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                                startActivity(intent);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -1055,6 +1062,7 @@ public class Jewellery extends AppCompatActivity {
                 finalSellerPrice+=300;
 
         }
+
 
         if (parentItem.equals("Home Accessories")){
             customerPrice=finalSellerPrice+(finalSellerPrice*18/100);

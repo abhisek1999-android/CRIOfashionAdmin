@@ -4,20 +4,24 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_final_logo_foreground"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_final_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".JewelleryMoreDetails"></activity>
-        <activity android:name=".ReturnedItemActivity" />
+        <activity android:name=".BeASellerPage"></activity>
+        <activity android:name=".SearchingActivity" />
         <activity android:name=".OrderedItemActivity" />
+        <activity android:name=".ReturnedItemActivity" />
+        <activity android:name=".JewelleryMoreDetails" />
         <activity android:name=".Jewellery" />
         <activity android:name=".Saller_Information" />
         <activity android:name=".SelectItemActivity" />
         <activity android:name=".others_details" />
         <activity android:name=".Stationery" />
-        <activity android:name=".ColorSizeAddingActivity" />
+        <activity
+            android:name=".ColorSizeAddingActivity"
+            android:parentActivityName=".Inventory_Activity" />
         <activity
             android:name=".UpdateProductDetails"
             android:parentActivityName=".Inventory_Activity" />
@@ -41,9 +45,11 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

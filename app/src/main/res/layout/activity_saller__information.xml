@@ -31,6 +31,8 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/futurapt_font"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:background="@drawable/image_background"
                     android:padding="5dp"
                     android:text="name"
@@ -55,7 +57,7 @@
                     android:layout_below="@id/companyName"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@id/companyName"
-                    android:background="@color/colorPrimary"
+                    android:background="#00000000"
                     android:onClick="changeCompnayNameToDb"
                     android:src="@drawable/ic_baseline_done_24"
                     android:visibility="gone" />
@@ -77,8 +79,10 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/futurapt_font"
+                    android:maxLines="1"
                     android:background="@drawable/image_background"
                     android:padding="5dp"
+                    android:inputType="phone"
                     android:text="name"
                     android:textColor="@color/common_google_signin_btn_text_light_pressed" />
 
@@ -98,7 +102,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@id/companyPhoneNumber"
-                    android:background="@color/colorPrimaryDark"
+                    android:background="#00000000"
                     android:onClick="changeCompnayPhoneNumberToDb"
                     android:src="@drawable/ic_baseline_done_24"
                     android:visibility="gone" />
@@ -121,6 +125,8 @@
                     android:background="@drawable/image_background"
                     android:padding="5dp"
                     android:fontFamily="@font/futurapt_font"
+                    android:maxLines="1"
+                    android:inputType="text"
                     android:text="name"
                     android:textColor="@color/common_google_signin_btn_text_light_pressed" />
 
@@ -140,8 +146,8 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="20dp"
                     android:layout_toEndOf="@id/companyGSTNumber"
-                    android:background="@color/colorPrimaryDark"
                     android:onClick="changeCompnayGstNumberToDb"
+                    android:background="#00000000"
                     android:src="@drawable/ic_baseline_done_24"
                     android:visibility="gone" />
 
@@ -157,6 +163,8 @@
                 android:layout_marginRight="170dp"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/futurapt_font"
+                android:inputType="text"
+                android:maxLines="1"
                 android:hint="Chart Name"
                 android:textColor="#000000" />
 

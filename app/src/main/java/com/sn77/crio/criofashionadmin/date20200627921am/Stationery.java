@@ -3,8 +3,10 @@ package com.sn77.crio.criofashionadmin.date20200627921am;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import es.dmoral.toasty.Toasty;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -47,6 +50,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -61,7 +65,6 @@ public class Stationery extends AppCompatActivity {
     private EditText product_price;
     private EditText customer_price;
     private EditText numberOf_Pieces;
-    private EditText brand_name;
     private EditText product_highlights;
     private Button submit1;
     private TextView idTextView;
@@ -69,6 +72,11 @@ public class Stationery extends AppCompatActivity {
     private EditText product_warranty;
     //ArrayList<Uri> images;
     private StorageReference pStorageRef;
+
+
+    RelativeLayout imagesLayout;
+
+    Button updateDetails;
 
     private RelativeLayout colorPalat;
     private RelativeLayout colorRelativeLayout;
@@ -86,6 +94,10 @@ public class Stationery extends AppCompatActivity {
     Boolean check = false;
     Boolean stateCheck = true;
 
+
+    TextView productMfd;
+    EditText productMrp;
+    DatePickerDialog pickerDialog;
 
     TextView colorHexCode;
     int i;
@@ -140,6 +152,7 @@ public class Stationery extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Add Details");
         setContentView(R.layout.stationery_activity);
 
         getApplicationContext().registerReceiver(mConnReceiver,
@@ -156,7 +169,6 @@ public class Stationery extends AppCompatActivity {
         customer_price = findViewById(R.id.customerPrice);
         numberOf_Pieces = findViewById(R.id.numberOfPieces);
         idTextView = findViewById(R.id.copyId);
-        brand_name = findViewById(R.id.brandName);
         product_warranty = findViewById(R.id.productWarranty);
         rootReference = FirebaseDatabase.getInstance().getReference();
         pStorageRef = FirebaseStorage.getInstance().getReference();
@@ -164,6 +176,9 @@ public class Stationery extends AppCompatActivity {
         colorRelativeLayout = findViewById(R.id.colorRelativeLayout);
         colorPalat = findViewById(R.id.colorPalates);
         colorHexCode = findViewById(R.id.colorTextCode);
+        productMrp=findViewById(R.id.productMrp);
+        imagesLayout=findViewById(R.id.imagesLayout);
+        updateDetails=findViewById(R.id.updateDetails);
 
 
         imageTex1 = findViewById(R.id.text1);
@@ -233,14 +248,12 @@ public class Stationery extends AppCompatActivity {
 
                     Products products = dataSnapshot.getValue(Products.class);
                     base_material.setText(products.getBase_material());
-                    brand_name.setText(products.getBrand_name());
                     product_warranty.setText(products.getWarranty_description());
                     package_includes.setText(products.getPackage_includes());
 
                     base_material.setEnabled(false);
                     package_includes.setEnabled(false);
                     product_warranty.setEnabled(false);
-                    brand_name.setEnabled(false);
 
                 } else {
 
@@ -356,6 +369,50 @@ public class Stationery extends AppCompatActivity {
         });
 
 
+
+
+
+        color_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if (!color_name.getText().toString().equals("")){
+
+                    if(!hasFocus){
+                        rootReference.child("products").child(intentItemId).child("color_details").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.hasChild(color_name.getText().toString())){
+
+                                    imagesLayout.setVisibility(View.GONE);
+                                    updateDetails.setVisibility(View.VISIBLE);
+
+                                }
+                                else {
+                                    // Toast.makeText(MainActivity.this, productId.getEditText().getText().toString()+seller_id, Toast.LENGTH_SHORT).show();
+                                    imagesLayout.setVisibility(View.VISIBLE);
+                                    updateDetails.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }  else {
+                        Toast.makeText(Stationery.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            }
+        });
+
+
+
+
 //validing color name
         product_Weight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -364,11 +421,11 @@ public class Stationery extends AppCompatActivity {
                 if (!product_Weight.getText().toString().equals("")) {
 
                     if (!hasFocus) {
-                        rootReference.child("products").child(intentItemId).child("color_details").child(product_Weight.getText().toString()).child("size").addListenerForSingleValueEvent(new ValueEventListener() {
+                        rootReference.child("products").child(intentItemId).child("color_details").child(color_name.getText().toString()).child("size").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.hasChild(color_name.getText().toString())) {
-                                    color_name.setError("This weight Already available for this color");
+                                if (dataSnapshot.hasChild(product_Weight.getText().toString())) {
+                                   product_Weight.setError("This weight Already available for this color");
                                     validColor = "not_available";
                                 } else {
                                     // Toast.makeText(MainActivity.this, productId.getEditText().getText().toString()+seller_id, Toast.LENGTH_SHORT).show();
@@ -399,6 +456,8 @@ public class Stationery extends AppCompatActivity {
 
                 if (stateCheck) {
                     Datasubmit();
+                }else {
+                    Toast.makeText(Stationery.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -413,6 +472,39 @@ public class Stationery extends AppCompatActivity {
                     customer_price.setText(String.valueOf(generateCustomerPrice()));
 
                 }
+            }
+        });
+
+
+
+        productMfd=findViewById(R.id.productMfd);
+        productMfd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                // date picker dialog
+                pickerDialog = new DatePickerDialog(Stationery.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                productMfd.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                pickerDialog.show();
+
+
+            }
+        });
+
+
+        updateDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateNewSize();
             }
         });
 
@@ -584,9 +676,15 @@ public class Stationery extends AppCompatActivity {
             Toast.makeText(this, "Select any color", Toast.LENGTH_SHORT).show();
         } else {
 
-            if (color_name.getText().toString().equals("") | size_description.getText().toString().equals("")
+            if (
+
+                    color_name.getText().toString().equals("") | size_description.getText().toString().equals("")
                     | product_Weight.getText().toString().equals("") | base_material.getText().toString().equals("") |
-                    product_price.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("") | images.size() == 0 | product_highlights.getText().toString().equals("")) {
+                    product_price.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("") | images.size() == 0
+                    | product_highlights.getText().toString().equals("")  | productMrp.getText().toString().equals("")   | productMfd.getText().toString().equals("Product MFD")
+
+
+            ) {
 
                 Toast.makeText(getApplicationContext(), "Some Fields Are Empty", Toast.LENGTH_SHORT).show();
                 dismissProgressDialog();
@@ -644,6 +742,90 @@ public class Stationery extends AppCompatActivity {
 
     }
 
+
+
+
+
+
+    private void updateNewSize() {
+
+        final String sizePathString = "products/" + intentItemId + "/color_details/" + color_name.getText().toString() + "/size/";
+
+
+        final String colorname = color_name.getText().toString();
+        String sizedescription = size_description.getText().toString();
+        String baseMaterial = base_material.getText().toString();
+        final String procuctWeight = product_Weight.getText().toString();
+        String packageincludes = package_includes.getText().toString();
+        String productPrice = product_price.getText().toString();
+        String customerPrice = customer_price.getText().toString();
+        String numberOfPieces = numberOf_Pieces.getText().toString();
+        String productWarranty = product_warranty.getText().toString();
+        String product_mrp = productMrp.getText().toString();
+        String product_mfd = productMfd.getText().toString();
+
+        final Map sizedetailsMap = new HashMap();
+        sizedetailsMap.put("size", procuctWeight);
+        sizedetailsMap.put("max_price",Double.parseDouble(customerPrice.trim()));
+        sizedetailsMap.put("min_price",Double.parseDouble(productPrice.trim())); //have to add the calculated price
+        sizedetailsMap.put("pieces",Double.parseDouble(numberOfPieces.trim()));
+        sizedetailsMap.put("mrp", Double.parseDouble(product_mrp.trim()));
+        sizedetailsMap.put("mfd", product_mfd);
+
+
+        if (  color_name.getText().toString().equals("") | size_description.getText().toString().equals("")
+                | product_Weight.getText().toString().equals("")  |
+                product_price.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("")
+                | productMrp.getText().toString().equals("")   | productMfd.getText().toString().equals("Product MFD")) {
+
+
+            Toasty.error(this, "Fields Are Empty", Toast.LENGTH_SHORT).show();
+        }
+        else {
+
+            if (validColor.equals("available")){
+
+                rootReference.child(sizePathString + procuctWeight).updateChildren(sizedetailsMap, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                        if (databaseError==null){
+
+                            Toast.makeText(Stationery.this, "Done", Toast.LENGTH_SHORT).show();
+                            base_material.setEnabled(false);
+                            package_includes.setEnabled(false);
+                            product_warranty.setEnabled(false);
+                            imagesLayout.setVisibility(View.VISIBLE);
+                            updateDetails.setVisibility(View.GONE);
+
+                            color_name.setText("");
+                            size_description.setText("");
+                            product_Weight.setText("");
+                            product_price.setText("");
+                            numberOf_Pieces.setText("");
+                            productMfd.setText("Product MFD");
+                            productMrp.setText("");
+
+                        }
+
+                    }
+                });
+
+            }else {
+                Toast.makeText(this, "Size Already exists!", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+    }
+
+
+
+
+
+
+
     public void startUpload() {
 
 
@@ -670,19 +852,24 @@ public class Stationery extends AppCompatActivity {
         String customerPrice = customer_price.getText().toString();
         String numberOfPieces = numberOf_Pieces.getText().toString();
         String productWarranty = product_warranty.getText().toString();
-        String brandName = brand_name.getText().toString();
+        String product_mrp = productMrp.getText().toString();
+        String product_mfd = productMfd.getText().toString();
+
+
+
         Map otherDetailsProductHashMap = new HashMap();
         otherDetailsProductHashMap.put("size_description", sizedescription);
         otherDetailsProductHashMap.put("base_material", baseMaterial);
         otherDetailsProductHashMap.put("package_includes", packageincludes);
-        otherDetailsProductHashMap.put("warranty_description", productWarranty);
-        otherDetailsProductHashMap.put("brand_name", brandName);
+        otherDetailsProductHashMap.put("warranty_description", productWarranty);//highlights missing
 
         final Map sizedetailsMap = new HashMap();
         sizedetailsMap.put("size", procuctWeight);
-        sizedetailsMap.put("min_price", Double.parseDouble(productPrice.trim()));
-        sizedetailsMap.put("max_price", Double.parseDouble(customerPrice.trim())); //have to add the calculated price
-        sizedetailsMap.put("pieces", Double.parseDouble(numberOfPieces.trim()));
+        sizedetailsMap.put("max_price",Double.parseDouble(customerPrice.trim()));
+        sizedetailsMap.put("min_price",Double.parseDouble(productPrice.trim())); //have to add the calculated price
+        sizedetailsMap.put("pieces",Double.parseDouble(numberOfPieces.trim()));
+        sizedetailsMap.put("mrp", Double.parseDouble(product_mrp.trim()));
+        sizedetailsMap.put("mfd", product_mfd);
 
         rootReference.child("products").child(intentItemId).updateChildren(otherDetailsProductHashMap, new DatabaseReference.CompletionListener() {
             @Override
@@ -703,8 +890,6 @@ public class Stationery extends AppCompatActivity {
                                         base_material.setEnabled(false);
                                         package_includes.setEnabled(false);
                                         product_warranty.setEnabled(false);
-                                        brand_name.setEnabled(false);
-
                                         uploadImage(colorname);
                                     }
                                 });
@@ -803,6 +988,35 @@ public class Stationery extends AppCompatActivity {
                     imageTex5.setText("image5");
                     imageTex6.setText("image6");
 
+                    if (imageUri1!=null)
+                    {
+                        imageUri1=null;
+                    }
+                    if (imageUri2!=null)
+                    {
+                        imageUri2=null;
+                    }
+                    if (imageUri3!=null)
+                    {
+                        imageUri3=null;
+                    }
+                    if (imageUri4!=null)
+                    {
+                        imageUri4=null;
+                    }
+                    if (imageUri5!=null)
+                    {
+                        imageUri5=null;
+                    }
+                    if (imageUri6!=null)
+                    {
+                        imageUri6=null;
+                    }
+                    color_name.setText("");
+                    product_highlights.setText("");
+                    product_Weight.setText("");
+                    product_price.setText("");
+                    numberOf_Pieces.setText("");
 
                     rootReference.child("products").child(intentItemId).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -878,6 +1092,8 @@ public class Stationery extends AppCompatActivity {
                     if (dataSnapshot.hasChild("warranty_description")) {
                         Log.i("msg", "msg");
                         finish();
+                       // Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                        //startActivity(intent);
                     } else {
                         exitByBackKey();
 
@@ -909,6 +1125,8 @@ public class Stationery extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 finish();
+                                Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                                startActivity(intent);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -990,11 +1208,19 @@ public class Stationery extends AppCompatActivity {
 
         if (finalWeight < 0.5) {
 
-            if (sellerPrice < 500) {
+            if (sellerPrice<200){
+                finalSellerPrice += 50;
+            }
+
+            else if (sellerPrice >= 200 && sellerPrice < 500) {
                 finalSellerPrice += 80;
-            } else if (sellerPrice >= 500 && sellerPrice < 1000) {
+            }
+
+            else if (sellerPrice >= 500 && sellerPrice < 1000) {
                 finalSellerPrice += 100;
-            } else
+            }
+
+            else
                 finalSellerPrice += 120;
 
         } else if (finalWeight >= 0.5 && finalWeight < 1) {
@@ -1015,6 +1241,12 @@ public class Stationery extends AppCompatActivity {
             } else
                 finalSellerPrice += 300;
 
+        }
+        else if (finalWeight >= 1.5 && finalWeight <3 ){
+            finalSellerPrice+=400;
+        }
+        else if (finalWeight >= 3 && finalWeight <5 ){
+            finalSellerPrice+=500;
         }
 
         if (childItem.equals("Sunglasses")) {

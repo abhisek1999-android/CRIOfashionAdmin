@@ -24,12 +24,14 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,9 +53,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.sn77.crio.criofashionadmin.date20200627921am.Inventory_Activity.ProductViewHolder;
+//import com.sn77.crio.criofashionadmin.date20200627921am.Inventory_Activity.ProductViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -61,22 +64,27 @@ import java.util.ArrayList;
 public class Inventory_Activity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private FirebaseAuth mAuth;
-    private DatabaseReference productsRef;
+    private DatabaseReference productsRef,rootRef;
     private StorageReference storageReference;
-   private RecyclerView uploadedItemView;
-   private RelativeLayout notFoundLayout;
+    private RecyclerView uploadedItemView;
+    private RelativeLayout notFoundLayout;
+   RelativeLayout searchItemActivity;
 
-    Boolean check=false;
-    Boolean stateCheck=true;
+    Boolean check = false;
+    Boolean stateCheck = true;
 
     View viewPager;
     RelativeLayout ownProgressDialog;
+
+
+    long backPressed;
+
     ArrayList<String> allItems;
     int position;
     ItemTouchHelper itemTouchHelper;
     String ItemOfArray;
     private TextView creditPint, deliveredItem, returnedItem, nextPaymentDate;
-    int countItem=0;
+    int countItem = 0;
     FirebaseRecyclerAdapter<Products, ProductViewHolder> firebaseRecyclerAdapter;
 
 
@@ -86,17 +94,17 @@ public class Inventory_Activity extends AppCompatActivity {
             NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             if (currentNetworkInfo.isConnected()) {
                 if (check) {
-                    stateCheck=true;
-                    Snackbar snackbar=Snackbar.make(uploadedItemView, "Connected  ", Snackbar.LENGTH_LONG);
-                    View snakBarView=snackbar.getView();
+                    stateCheck = true;
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView = snackbar.getView();
                     snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
                     snackbar.show();
                 }
             } else {
                 check = true;
-                stateCheck=false;
-                Snackbar snackbar=Snackbar.make(uploadedItemView, "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
-                View snakBarView=snackbar.getView();
+                stateCheck = false;
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView = snackbar.getView();
                 snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
                 snackbar.show();
 
@@ -108,54 +116,63 @@ public class Inventory_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory);
-
+     setContentView(R.layout.activity_inventory);
 
 
         getApplicationContext().registerReceiver(mConnReceiver,
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));//CHECKING CONNECTIVITY
-
+        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 
         this.setFinishOnTouchOutside(false);
 
-       //isConnected(getApplicationContext());
+        //isConnected(getApplicationContext());
         mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
+       rootRef = FirebaseDatabase.getInstance().getReference();
         productsRef = FirebaseDatabase.getInstance().getReference().child("products");
-        storageReference=FirebaseStorage.getInstance().getReference();
+
+        storageReference = FirebaseStorage.getInstance().getReference();
         uploadedItemView = findViewById(R.id.uploaded_item_list);
 
+        searchItemActivity = findViewById(R.id.searchItemActivity);
+        searchItemActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),SearchingActivity.class);
+                startActivity(intent);
 
+            }
+        });
 
         uploadedItemView.hasFixedSize();
         uploadedItemView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
 
-        ownProgressDialog=findViewById(R.id.ownProgressDialog);
-        notFoundLayout=findViewById(R.id.notFoundLayout);
+        ownProgressDialog = findViewById(R.id.ownProgressDialog);
+        notFoundLayout = findViewById(R.id.notFoundLayout);
         creditPint = findViewById(R.id.creditPoint);
         deliveredItem = findViewById(R.id.deliveredItem);
         returnedItem = findViewById(R.id.returnItem);
         nextPaymentDate = findViewById(R.id.nextPaymentDate);
-        allItems=new ArrayList<>();
+        allItems = new ArrayList<>();
 
-        if(mCurrentUser!=null){
+        if (mCurrentUser != null) {
 
             Query firebaseSearchQuery = productsRef.orderByChild("company_id").equalTo(mCurrentUser.getUid());
 
             firebaseSearchQuery.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snap: dataSnapshot.getChildren()) {
+                    for (DataSnapshot snap : dataSnapshot.getChildren()) {
 
-                        countItem= (int) snap.getChildrenCount();
+                        countItem = (int) snap.getChildrenCount();
 
                     }
 
-                    if (countItem==0){
+                    if (countItem == 0) {
                         notFoundLayout.setVisibility(View.VISIBLE);
+                    } else {
+                        notFoundLayout.setVisibility(View.GONE);
                     }
-
-                    else {notFoundLayout.setVisibility(View.GONE);}
 
                 }
 
@@ -167,94 +184,81 @@ public class Inventory_Activity extends AppCompatActivity {
         }
 
 
-     itemTouchHelper  =new ItemTouchHelper(simpleCallback);
-
-
-    }
 
 
 
-
-
-ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
-    @Override
-    public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-        return false;
-    }
-
-    @Override
-    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
-
-        position=viewHolder.getAdapterPosition();
-
-        new AlertDialog.Builder(Inventory_Activity.this)
-                .setIcon(R.drawable.ic_baseline_warning_24)
-                .setTitle("Are you Sure!")
-                .setMessage("The data will be completly deleted!")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        productsRef.child(allItems.get(position)).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if (task.isSuccessful()){
-                                    firebaseRecyclerAdapter.notifyItemRemoved(position);
-                                    allItems.remove(position);
-                                }
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(Inventory_Activity.this, "Some Error Occurred", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                     //   Toast.makeText(Inventory_Activity.this,allItems.get(position), Toast.LENGTH_SHORT).show();
-
-
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        firebaseRecyclerAdapter.notifyDataSetChanged();
-                    }
-                })
-                .show()
-                .setCancelable(false);
-
-
-
-
-
+        itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(uploadedItemView);
 
     }
 
-    @Override
-    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+
+if (stateCheck){
+    position = viewHolder.getAdapterPosition();
+    final Products products=firebaseRecyclerAdapter.getItem(position);
+
+    new AlertDialog.Builder(Inventory_Activity.this)
+            .setIcon(R.drawable.ic_baseline_warning_24)
+            .setTitle("Are you Sure!")
+            .setMessage("The data will be completely deleted!")
+            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    productsRef.child(products.getProductId()).setValue(null);
+                    productsRef.child(products.getProductId()).child("thumb_image").setValue(null);
+                    productsRef.child(products.getProductId()).child("upload_status").setValue(null);
+
+                    //   Toast.makeText(Inventory_Activity.this,allItems.get(position), Toast.LENGTH_SHORT).show();
 
 
-        new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                }
+            })
+            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    firebaseRecyclerAdapter.notifyDataSetChanged();
+                }
+            })
+            .show()
+            .setCancelable(false);}else {
 
-                .addSwipeLeftBackgroundColor(ContextCompat.getColor(Inventory_Activity.this,R.color.colorRed))
-                .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
-                .create()
-                .decorate();
+    Toast.makeText(Inventory_Activity.this, "No Internet connection", Toast.LENGTH_SHORT).show();
+    firebaseRecyclerAdapter.notifyDataSetChanged();
+}
 
 
 
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
 
-    }
-};
+        @Override
+        public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 
 
+            new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
 
-    private void displayItems() {
+                    .addSwipeLeftBackgroundColor(ContextCompat.getColor(Inventory_Activity.this, R.color.colorRed))
+                    .addSwipeLeftActionIcon(R.drawable.ic_baseline_delete_24)
+                    .create()
+                    .decorate();
+
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+        }
+    };
+
+
+    public void displayItems() {
 
         final Query firebaseSearchQuery = productsRef.orderByChild("company_id").equalTo(mCurrentUser.getUid());
 
@@ -262,9 +266,7 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
                 .setQuery(firebaseSearchQuery, Products.class)
                 .build();
 
-               firebaseRecyclerAdapter= new FirebaseRecyclerAdapter<Products, ProductViewHolder>(options) {
-
-
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Products, ProductViewHolder>(options) {
 
 
             @Override
@@ -272,30 +274,29 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
                 super.onDataChanged();
 
                 ownProgressDialog.setVisibility(View.GONE);
-               // dismissProgressDialog();
+                // dismissProgressDialog();
             }
 
             @Override
             protected void onBindViewHolder(@NonNull ProductViewHolder productViewHolder, final int i, @NonNull final Products products) {
 
 
-
 //this is for counting the values
                 firebaseSearchQuery.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snap: dataSnapshot.getChildren()) {
+                        for (DataSnapshot snap : dataSnapshot.getChildren()) {
 
-                            countItem= (int) snap.getChildrenCount();
+                            countItem = (int) snap.getChildrenCount();
 
 
                         }
 
-                        if (countItem==0){
+                        if (countItem == 0) {
                             notFoundLayout.setVisibility(View.VISIBLE);
+                        } else {
+                            notFoundLayout.setVisibility(View.GONE);
                         }
-
-                        else {notFoundLayout.setVisibility(View.GONE);}
 
                     }
 
@@ -306,8 +307,6 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
                 });
 
                 //item added to an array for delete purpose
-                allItems.add(products.getProductId());
-
 
                 if (!products.getUpload_status().equals("ok")) {
                     productViewHolder.errorImage.setVisibility(View.VISIBLE);
@@ -316,22 +315,23 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
                 }
 
                 productViewHolder.productName.setText(products.getName());
-                Picasso.with(getApplicationContext()).load(products.getThumb_image()).placeholder(R.drawable.ic_baseline_image_search_24).into(productViewHolder.itemImageView);
+                //Picasso.with(getApplicationContext()).load(products.getThumb_image()).into(productViewHolder.itemImageView);
+                Picasso.get().load(products.getThumb_image()).placeholder(R.drawable.ic_user).into(productViewHolder.itemImageView);
                 productViewHolder.info1.setVisibility(View.VISIBLE);
-                productViewHolder.info1.setText("Parent Category:"+products.getParent_category());
+                productViewHolder.info1.setText("Parent Category:" + products.getParent_category());
 
                 productViewHolder.info2.setVisibility(View.VISIBLE);
-                productViewHolder.info2.setText("Child Category:"+products.getProduct_type());
+                productViewHolder.info2.setText("Child Category:" + products.getProduct_type());
 
                 productViewHolder.info3.setVisibility(View.VISIBLE);
-                productViewHolder.info3.setText("Id:"+products.getProductId());
+                productViewHolder.info3.setText("Id:" + products.getProductId());
 
 
                 productViewHolder.mview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                      if (stateCheck){
+                        if (stateCheck) {
                             if (products.getProductId() != null) {
 
                                 // Toast.makeText(Inventory_Activity.this, String.valueOf(i), Toast.LENGTH_SHORT).show();
@@ -362,19 +362,13 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
                                                         intent.putExtra("childCategory", products.getProduct_type());
                                                         intent.putExtra("parentCategory", products.getParent_category());
                                                         startActivity(intent);
-                                                    }
-                                                    else if (products.getParent_category().equals("Stationary") | products.getParent_category().equals("Fashion Accessories")) {
+                                                    } else if (products.getParent_category().equals("Stationary") | products.getParent_category().equals("Fashion Accessories")) {
                                                         Intent intent = new Intent(getApplicationContext(), Stationery.class);
                                                         intent.putExtra("itemId", products.getProductId());
                                                         intent.putExtra("childCategory", products.getProduct_type());
                                                         intent.putExtra("parentCategory", products.getParent_category());
                                                         startActivity(intent);
-                                                    }
-
-
-
-
-                                                    else {
+                                                    } else {
                                                         Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
                                                         intent.putExtra("itemId", products.getProductId());
                                                         intent.putExtra("childCategory", products.getProduct_type());
@@ -408,9 +402,9 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
                                 Toast.makeText(Inventory_Activity.this, "Id Not Found", Toast.LENGTH_SHORT).show();
                             }
 
-                        }else {
-                          Toast.makeText(Inventory_Activity.this, "No Internet connection", Toast.LENGTH_SHORT).show();
-                      }
+                        } else {
+                            Toast.makeText(Inventory_Activity.this, "No Internet connection", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 });
@@ -431,35 +425,38 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
         };
         uploadedItemView.setAdapter(firebaseRecyclerAdapter);
         firebaseRecyclerAdapter.startListening();
-        itemTouchHelper.attachToRecyclerView(uploadedItemView);
+
 
     }
 //class for the view holder
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
 
-        TextView productName,info1,info2,info3;
+        TextView productName, info1, info2, info3;
         ImageView itemImageView, errorImage;
         View mview;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             mview = itemView;
-            info1=itemView.findViewById(R.id.info1);
-            info2=itemView.findViewById(R.id.info2);
-            info3=itemView.findViewById(R.id.info3);
-            itemImageView=itemView.findViewById(R.id.productsImage);
+            info1 = itemView.findViewById(R.id.info1);
+            info2 = itemView.findViewById(R.id.info2);
+            info3 = itemView.findViewById(R.id.info3);
+            itemImageView = itemView.findViewById(R.id.productsImage);
             productName = itemView.findViewById(R.id.itemName);
             errorImage = itemView.findViewById(R.id.errorSign);
 
         }
     }
 
-
     public void addProducts(View view) {
-        Intent intent = new Intent(getApplicationContext(), SelectItemActivity.class);
+        if (stateCheck) {
+            Intent intent = new Intent(getApplicationContext(), SelectItemActivity.class);
 
-        startActivity(intent);
+            startActivity(intent);
+        }else {
+            Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -473,14 +470,51 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
             displayItems();
         }
 
+        if(mCurrentUser!=null){
 
+            rootRef.child("company_details").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild(mCurrentUser.getUid())) {
+                        Toast.makeText(Inventory_Activity.this, "Add Your Details", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), CompanyDetailsActivity.class);
+                        startActivity(intent);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+
+
+    }
+    public void onPress() {
+        FirebaseAuth.getInstance().signOut();
+       // moveTaskToBack(true);
+        Intent intent=new Intent(getApplicationContext(),LoginActivity.class);
+        startActivity(intent);
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        FirebaseAuth.getInstance().signOut();
-        moveTaskToBack(true);
+
+        if (backPressed+2000>System.currentTimeMillis()){
+
+            moveTaskToBack(true);
+        }
+
+        else {
+
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+
+        backPressed=System.currentTimeMillis();
     }
 
     @Override
@@ -491,31 +525,46 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        public boolean onOptionsItemSelected (@NonNull MenuItem item){
 
         super.onOptionsItemSelected(item);
+        if(stateCheck){
         if (item.getItemId() == R.id.user_info) {
 
             Intent intent = new Intent(getApplicationContext(), Saller_Information.class);
             startActivity(intent);
 
+        }}else {
+            Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
         }
-
+       if(stateCheck){
         if (item.getItemId() == R.id.orderd_Products) {
 
             Intent intent = new Intent(getApplicationContext(), OrderedItemActivity.class);
             startActivity(intent);
 
         }
+       }else {
+           Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+       }
+       if (stateCheck){
         if (item.getItemId() == R.id.returned_products) {
 
             Intent intent = new Intent(getApplicationContext(), ReturnedItemActivity.class);
             startActivity(intent);
         }
+       }else {
+           Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+       }if (stateCheck){
+        if (item.getItemId() == R.id.Sign_Out) {
+            onPress();
+        }
+       }else {
+            Toast.makeText(this, "No Internet connection", Toast.LENGTH_SHORT).show();
+        }
 
         return true;
-    }
-
+}
 // for checking internetConnection
 
     public boolean isConnected(Context context) {
@@ -532,33 +581,29 @@ ItemTouchHelper.SimpleCallback simpleCallback =new ItemTouchHelper.SimpleCallbac
             return false;
         }
     }
-        private void showDialog()
-        {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("You are not connected to the Internet!")
-                    .setCancelable(false)
-                    .setIcon(R.drawable.ic_baseline_perm_scan_wifi_24)
-                    .setTitle("No Internet Connection!")
-                    .setPositiveButton("Go to Setting", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                startActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
-                            }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("You are not connected to the Internet!")
+                .setCancelable(false)
+                .setIcon(R.drawable.ic_baseline_perm_scan_wifi_24)
+                .setTitle("No Internet Connection!")
+                .setPositiveButton("Go to Setting", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            startActivity(new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS));
                         }
-                    })
-                    .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            finish();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.setCancelable(true);
-            alert.show();
-        }
-
-
-
-
+                    }
+                })
+                .setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.setCancelable(true);
+        alert.show();
+    }
 
 
 }

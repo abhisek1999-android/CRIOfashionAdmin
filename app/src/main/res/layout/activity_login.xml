@@ -82,6 +82,7 @@
             android:ems="10"
             android:fontFamily="sans-serif"
             android:hint="Enter Your UserId"
+
             android:inputType="textPersonName"
             android:background="#00000000"
             android:textColorHint="#fff"

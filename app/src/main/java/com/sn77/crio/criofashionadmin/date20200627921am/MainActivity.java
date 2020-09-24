@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     EditText product_name;
     EditText product_description;
     EditText product_company;
+    EditText brand_name;
     EditText product_overview;
     //*****************for TextInputLayout chenge all the EditText to TextInputLayout
     // ******************and at the time of retriving insted of .getText() we have to write getEditText().getText();
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Insert Product Details");
         setContentView(R.layout.activity_main);
 
         getApplicationContext().registerReceiver(mConnReceiver,
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         product_Feature=findViewById(R.id.productFeature);
         product_type = findViewById(R.id.productType);//this is editText now
         product_for=findViewById(R.id.productFor);
-
+        brand_name=findViewById(R.id.brandName);
         parentLayout= findViewById(android.R.id.content);
 
 
@@ -213,7 +215,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(stateCheck){
-                Datasubmit();}
+                Datasubmit();
+                }else {
+                    Toast.makeText(MainActivity.this, "No Internet connection", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -269,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                             validProductID=false;
                         }
 
-                        else  if (productId.getEditText().getText().length()<4){
+                        else  if (productId.getEditText().getText().length()<4 && productId.getEditText().getText().length()>12 ){
 
                             productId.getEditText().setError("Id length should be more then 4 character");
                             validProductID=false;
@@ -303,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         if(validProductID){
                 if (productId.getEditText().getText().toString().equals("") |product_name.getText().toString().equals("")| product_description.getText().toString().equals("")
                         |package_width.getText().toString().equals("")|package_height.getText().toString().equals("")|package_depth.getText().toString().equals("")
-                        |package_weight.getText().toString().equals(""))
+                        |package_weight.getText().toString().equals("")|brand_name.getText().toString().equals("")|product_shortdescription.getText().toString().equals("")|product_material.getText().toString().equals(""))
 
                 {
                     Toast.makeText(MainActivity.this, "Some Fields Are Empty!", Toast.LENGTH_SHORT).show();
@@ -312,70 +317,84 @@ public class MainActivity extends AppCompatActivity {
 
                 else {
 
-                    if (Double.parseDouble(package_weight.getText().toString())<1.5){
-
-                        showProgressDialog();
-                        String nameProduct = product_name.getText().toString();
-                        String descriptionProduct = product_description.getText().toString();
-                        String companyProduct = product_company.getText().toString();
-                        String overviewProduct = product_overview.getText().toString();
-                        productId_unique = productId.getEditText().getText().toString()+seller_id;
-                        final String shortDescription = product_shortdescription.getText().toString();
-                        final String productMaterial  = product_material.getText().toString();
-                        String materialWeight=material_weight.getText().toString();
-                        final String careInstruction = product_careinstruction.getText().toString();
-                        String packageWidth = package_width.getText().toString();
-                        final String packageHeight = package_height.getText().toString();
-                        String packageDepth = package_depth.getText().toString();
-                        String packageWeight = package_weight.getText().toString();
-                        final String productFeature=product_Feature.getText().toString();
-
-                        //  String path_ref = "products/" + productId_unique;
-
-
-                        Map productHashMap = new HashMap();
-                        productHashMap.put("name", nameProduct);
-                        productHashMap.put("description", descriptionProduct);
-                        productHashMap.put("company", companyProduct);
-                        productHashMap.put("overview", overviewProduct);
-                        productHashMap.put("productId", productId_unique);
-                        productHashMap.put("short_description", shortDescription);
-                        productHashMap.put("product_material", productMaterial);
-                        productHashMap.put("material_weight",materialWeight);
-                        productHashMap.put("care_information", careInstruction);
-                        productHashMap.put("company_id",firebaseUser.getUid());
-                        productHashMap.put("product_for",product_for_item);
-                        productHashMap.put("product_type",product_type_item);
-                        productHashMap.put("product_Feature",productFeature);
-                        productHashMap.put("parent_category",parentCategory);
-                        productHashMap.put("upload_status","false");
+                    if (Double.parseDouble(package_weight.getText().toString())<5){
 
 
 
-
-                        final Map packageHashMap=new HashMap();
-                        packageHashMap.put("package_width",packageWidth);
-                        packageHashMap.put("package_height",packageHeight);
-                        packageHashMap.put("package_depth",packageDepth);
-                        packageHashMap.put("weight",packageWeight);
-
-                        final Map pathRefMap = new HashMap();
-                        pathRefMap.put("products/"+productId_unique+"/package_details" , packageHashMap);
-
-                        databaseReference.child("products/" + productId_unique).setValue(productHashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if (task.isSuccessful()){
+                        AlertDialog alertbox = new AlertDialog.Builder(this)
+                                .setIcon(R.drawable.ic_baseline_warning_24)
+                                .setTitle("Is this fields are correct? This fields can not be change later")
+                                .setMessage("Package Width:"+package_width.getText().toString()+"\nPackage Height:"+package_height.getText().toString()
+                                        +"\nPackage Depth:"+package_depth.getText().toString() +"\nPackage Weight:"+package_weight.getText().toString()
+                                )
+                                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
 
 
-                                    databaseReference.updateChildren(pathRefMap, new DatabaseReference.CompletionListener() {
-                                        @Override
-                                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                            if (databaseError == null) {
-                                                Toast.makeText(MainActivity.this, "Added SuccessFully!", Toast.LENGTH_SHORT).show();
 
-                                                product_name.setText("");
+                                        showProgressDialog();
+                                        String nameProduct = product_name.getText().toString();
+                                        String descriptionProduct = product_description.getText().toString();
+                                        String companyProduct = product_company.getText().toString();
+                                        String overviewProduct = product_overview.getText().toString();
+                                        productId_unique = seller_id+productId.getEditText().getText().toString();
+                                        final String shortDescription = product_shortdescription.getText().toString();
+                                        final String productMaterial  = product_material.getText().toString();
+                                        String materialWeight=material_weight.getText().toString();
+                                        final String careInstruction = product_careinstruction.getText().toString();
+                                        String packageWidth = package_width.getText().toString();
+                                        final String packageHeight = package_height.getText().toString();
+                                        String packageDepth = package_depth.getText().toString();
+                                        String packageWeight = package_weight.getText().toString();
+                                        final String productFeature=product_Feature.getText().toString();
+                                        String brandName=brand_name.getText().toString();
+                                        //  String path_ref = "products/" + productId_unique;
+
+
+                                        Map productHashMap = new HashMap();
+                                        productHashMap.put("name", nameProduct);
+                                        productHashMap.put("description", descriptionProduct);
+                                        productHashMap.put("company", companyProduct);
+                                        productHashMap.put("overview", overviewProduct);
+                                        productHashMap.put("productId", productId_unique);
+                                        productHashMap.put("short_description", shortDescription);
+                                        productHashMap.put("product_material", productMaterial);
+                                        productHashMap.put("material_weight",materialWeight);
+                                        productHashMap.put("care_information", careInstruction);
+                                        productHashMap.put("company_id",firebaseUser.getUid());
+                                        productHashMap.put("product_for",product_for_item);
+                                        productHashMap.put("product_type",product_type_item);
+                                        productHashMap.put("product_Feature",productFeature);
+                                        productHashMap.put("parent_category",parentCategory);
+                                        productHashMap.put("upload_status","false");
+                                        productHashMap.put("brand_name",brandName);
+
+
+
+
+                                        final Map packageHashMap=new HashMap();
+                                        packageHashMap.put("package_width",packageWidth);
+                                        packageHashMap.put("package_height",packageHeight);
+                                        packageHashMap.put("package_depth",packageDepth);
+                                        packageHashMap.put("weight",packageWeight);
+
+                                        final Map pathRefMap = new HashMap();
+                                        pathRefMap.put("products/"+productId_unique+"/package_details" , packageHashMap);
+
+                                        databaseReference.child("products/" + productId_unique).setValue(productHashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                if (task.isSuccessful()){
+
+
+                                                    databaseReference.updateChildren(pathRefMap, new DatabaseReference.CompletionListener() {
+                                                        @Override
+                                                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                                            if (databaseError == null) {
+                                                                Toast.makeText(MainActivity.this, "Added SuccessFully!", Toast.LENGTH_SHORT).show();
+                                                                dismissProgressDialog();
+                                      /*          product_name.setText("");
                                                 product_company.setText("");
                                                 product_description.setText("");
                                                 product_overview.setText("");
@@ -388,83 +407,92 @@ public class MainActivity extends AppCompatActivity {
                                                 package_weight.setText("");
                                                 dismissProgressDialog();
                                                 product_Feature.setText("");
-                                                material_weight.setText("");
+                                                material_weight.setText("");*/
 
-                                                //intending depends on the category
+                                                                //intending depends on the category
 
-                                                if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories"))
+                                                                if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories"))
 
-                                                {
-                                                    Intent intent=new Intent(getApplicationContext(),others_details.class);
-                                                    intent.putExtra("itemId",productId_unique);
-                                                    intent.putExtra("parentCategory",parentCategory);
-                                                    intent.putExtra("childCategory",childCategory);
-                                                    startActivity(intent);
+                                                                {
+                                                                    Intent intent=new Intent(getApplicationContext(),others_details.class);
+                                                                    intent.putExtra("itemId",productId_unique);
+                                                                    intent.putExtra("parentCategory",parentCategory);
+                                                                    intent.putExtra("childCategory",childCategory);
+                                                                    startActivity(intent);
+                                                                }
+                                                                else if(childCategory.equals("Jewellery"))
+                                                                {
+                                                                    Intent intent=new Intent(getApplicationContext(),Jewellery.class);
+                                                                    intent.putExtra("itemId",productId_unique);
+                                                                    intent.putExtra("parentCategory",parentCategory);
+                                                                    intent.putExtra("childCategory",childCategory);
+                                                                    startActivity(intent);
+                                                                }
+
+                                                                else if(parentCategory.equals("Stationary") | parentCategory.equals("Fashion Accessories"))
+                                                                {
+                                                                    Intent intent=new Intent(getApplicationContext(),Stationery.class);
+                                                                    intent.putExtra("itemId",productId_unique);
+                                                                    intent.putExtra("parentCategory",parentCategory);
+                                                                    intent.putExtra("childCategory",childCategory);
+                                                                    startActivity(intent);
+                                                                }
+                                                                else{
+                                                                    Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
+                                                                    intent.putExtra("itemId", productId_unique);
+                                                                    intent.putExtra("parentCategory", parentCategory);
+                                                                    intent.putExtra("childCategory", childCategory);
+                                                                    startActivity(intent);
+                                                                }
+
+
+                                                            }else {
+                                                                Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                                                dismissProgressDialog();
+                                                            }
+                                                        }
+                                                    });
+
+
                                                 }
-                                                else if(childCategory.equals("Jewellery"))
-                                                {
-                                                    Intent intent=new Intent(getApplicationContext(),Jewellery.class);
-                                                    intent.putExtra("itemId",productId_unique);
-                                                    intent.putExtra("parentCategory",parentCategory);
-                                                    intent.putExtra("childCategory",childCategory);
-                                                    startActivity(intent);
-                                                }
 
-                                                else if(parentCategory.equals("Stationary") | parentCategory.equals("Fashion Accessories"))
-                                                {
-                                                    Intent intent=new Intent(getApplicationContext(),Stationery.class);
-                                                    intent.putExtra("itemId",productId_unique);
-                                                    intent.putExtra("parentCategory",parentCategory);
-                                                    intent.putExtra("childCategory",childCategory);
-                                                    startActivity(intent);
-                                                }
-                                                else{
-                                                    Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
-                                                    intent.putExtra("itemId", productId_unique);
-                                                    intent.putExtra("parentCategory", parentCategory);
-                                                    intent.putExtra("childCategory", childCategory);
-                                                    startActivity(intent);
-                                                }
-
-
-                                            }else {
-                                                Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                                                dismissProgressDialog();
                                             }
-                                        }
-                                    });
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
 
+                                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                dismissProgressDialog();
 
-                                }
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-
-                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                dismissProgressDialog();
-
-                            }
-                        });
+                                            }
+                                        });
 
 
 
 
 
+
+
+                                    }
+                                })
+                                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+                                    // do something when the button is clicked
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                    }
+                                })
+                                .show();
 
                     }else {
-                        Toast.makeText(this, "weight should be less then 1.5 kg!", Toast.LENGTH_SHORT).show();
+                        package_weight.setError("weight should be less then 5 kg!");
+                        Toast.makeText(this, "weight should be less then 5 kg!", Toast.LENGTH_SHORT).show();
                     }
 
 
                 }
 
 
-
-
             //////////////
-
 
 
         }else {

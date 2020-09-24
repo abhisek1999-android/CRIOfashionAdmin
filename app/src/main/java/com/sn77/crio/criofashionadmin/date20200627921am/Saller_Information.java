@@ -10,11 +10,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -39,6 +44,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -88,11 +94,40 @@ public class Saller_Information extends AppCompatActivity {
     private RecyclerView sizeChartRecyclerView;
     Uri userImageUri;
 
+    Boolean check = false;
+    Boolean stateCheck = true;
+
+    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (currentNetworkInfo.isConnected()) {
+                if (check) {
+                    stateCheck = true;
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView = snackbar.getView();
+                    snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
+                    snackbar.show();
+                }
+            } else {
+                check = true;
+                stateCheck = false;
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView = snackbar.getView();
+                snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
+                snackbar.show();
+
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Seller Information");
         setContentView(R.layout.activity_saller__information);
-
+        getApplicationContext().registerReceiver(mConnReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         mAuth=FirebaseAuth.getInstance();
         mCurrentUser=mAuth.getCurrentUser();
         companyInfoRef= FirebaseDatabase.getInstance().getReference().child("company_details");
@@ -151,7 +186,7 @@ public class Saller_Information extends AppCompatActivity {
                 companyId.setText(companyDetails.getSeller_id());
 
                 if (companyDetails.getUser_image()!=null) {
-                    Picasso.with(getApplicationContext()).load(companyDetails.getUser_image()).placeholder(R.drawable.ic_user).into(user_image);
+                    Picasso.get().load(companyDetails.getUser_image()).placeholder(R.drawable.ic_user).into(user_image);
                 }
 
 
@@ -289,7 +324,7 @@ public class Saller_Information extends AppCompatActivity {
                         }
                     });
                 }else {
-                    Toast.makeText(this, "Image size must be less then  150KB", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Image size must be less then  500KB", Toast.LENGTH_SHORT).show();
                     dismissProgressDialog();
                 }
 
@@ -328,62 +363,63 @@ public class Saller_Information extends AppCompatActivity {
     //size chart
     public void uploadImage(View view) {
 
+if (stateCheck) {
+
+    if ((CheckImageSize(sizeChartUri) / 1024) < 160) {
 
 
-        if ((CheckImageSize(sizeChartUri) / 1024)<160){
+        if (sizeChartUri != null & !sizeChartName.getText().toString().equals("")) {
+            showProgressDialog();
+            final String randomkey1 = UUID.randomUUID().toString();
+            final StorageReference chartRef = pStorageRef.child("Size_charts").child(mCurrentUser.getUid()).child(randomkey1 + ".jpg");
+            chartRef.putFile(sizeChartUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    chartRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
 
+                            String downloadUrl1 = uri.toString();
+                            Map sizeChartDetails = new HashMap();
+                            sizeChartDetails.put("size_chart_name", sizeChartName.getText().toString());
+                            sizeChartDetails.put("chart_url", downloadUrl1);
 
+                            companyInfoRef.child(mCurrentUser.getUid()).child("size_charts").child(sizeChartName.getText().toString()).updateChildren(sizeChartDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        dismissProgressDialog();
+                                        Toast.makeText(Saller_Information.this, "Uploaded", Toast.LENGTH_SHORT).show();
 
-            if (sizeChartUri!=null&!sizeChartName.getText().toString().equals("")) {
-                showProgressDialog();
-                final String randomkey1 = UUID.randomUUID().toString();
-                final StorageReference chartRef = pStorageRef.child("Size_charts").child(mCurrentUser.getUid()).child(randomkey1 + ".jpg");
-                chartRef.putFile(sizeChartUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        chartRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
+                                        sizeChartName.setText("");
+                                        sizeChart.setImageResource(R.drawable.ic_baseline_account_box_24);
+                                        dismissProgressDialog();
 
-                                String downloadUrl1 = uri.toString();
-                                Map sizeChartDetails = new HashMap();
-                                sizeChartDetails.put("size_chart_name", sizeChartName.getText().toString());
-                                sizeChartDetails.put("chart_url", downloadUrl1);
-
-                                companyInfoRef.child(mCurrentUser.getUid()).child("size_charts").child(sizeChartName.getText().toString()).updateChildren(sizeChartDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            dismissProgressDialog();
-                                            Toast.makeText(Saller_Information.this, "Uploaded", Toast.LENGTH_SHORT).show();
-
-                                            sizeChartName.setText("");
-                                            sizeChart.setImageResource(R.drawable.ic_baseline_account_box_24);
-                                            dismissProgressDialog();
-
-                                        } else {
-                                            dismissProgressDialog();
-                                            Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                                        }
-
-
+                                    } else {
+                                        dismissProgressDialog();
+                                        Toast.makeText(Saller_Information.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
                                     }
-                                });
 
-                            }
-                        });
-                    }
-                });
-            }else {
-                Toast.makeText(this, "You Have To Select Name And Image Both", Toast.LENGTH_SHORT).show();
-                dismissProgressDialog();
-            }
 
-        }else {
-            Toast.makeText(this, "Image size must be less then  150KB", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+                    });
+                }
+            });
+        } else {
+            Toast.makeText(this, "You Have To Select Name And Image Both", Toast.LENGTH_SHORT).show();
             dismissProgressDialog();
         }
 
+    } else {
+        Toast.makeText(this, "Image size must be less then  500KB", Toast.LENGTH_SHORT).show();
+        dismissProgressDialog();
+    }
+}else {
+    Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+}
     }
 
 
@@ -407,36 +443,39 @@ public class Saller_Information extends AppCompatActivity {
 
     public void changePassword(View view) {
 
+   if (stateCheck) {
+       AlertDialog alertDialog = new AlertDialog.Builder(this)
 
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
+               .setIcon(android.R.drawable.ic_dialog_alert)
 
-                .setIcon(android.R.drawable.ic_dialog_alert)
+               .setTitle("Are you sure ?")
 
-                .setTitle("Are you sure ?")
+               .setMessage("You will be redirected to Gmail to send us Password changing request. ")
 
-                .setMessage("You will be redirected to G-mail to send us Password changing request. ")
+               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialogInterface, int i) {
 
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                       String[] email = {"sellers@criof.com"};
 
-                        String[] email={"sellers@criof.com"};
+                       Intent intent = new Intent(Intent.ACTION_SENDTO);
+                       intent.setData(Uri.parse("mailto:"));
+                       intent.putExtra(Intent.EXTRA_EMAIL, email);
+                       intent.putExtra(Intent.EXTRA_SUBJECT, "Request for Password Change");
+                       intent.putExtra(Intent.EXTRA_TEXT, "I request you to change the password and set it to-");
+                       startActivity(Intent.createChooser(intent, "Choose one.."));
+                   }
+               })
 
-                        Intent intent=new Intent(Intent.ACTION_SENDTO);
-                        intent.setData(Uri.parse("mailto:"));
-                        intent.putExtra(Intent.EXTRA_EMAIL,email);
-                        intent.putExtra(Intent.EXTRA_SUBJECT,"Request for Password Change");
-                        intent.putExtra(Intent.EXTRA_TEXT,"I request you to change the password and set it to-");
-                        startActivity(Intent.createChooser(intent,"Choose one.."));
-                    }
-                })
-
-                .setNegativeButton("CANCEL", null)
-                .show();
-
+               .setNegativeButton("CANCEL", null)
+               .show();
+   }else {
+       Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+   }
     }
 
     public void changeCompnayName(View view) {
+        if (stateCheck){
         companyName.setEnabled(true);
         companyName.requestFocus();
         companyName.setCursorVisible(true);
@@ -445,9 +484,13 @@ public class Saller_Information extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
 
+    }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void changeCompnayPhoneNumber(View view) {
+        if (stateCheck){
         companyPhoneNumber.setEnabled(true);
         companyPhoneNumber.requestFocus();
         companyPhoneNumber.setCursorVisible(true);
@@ -455,67 +498,84 @@ public class Saller_Information extends AppCompatActivity {
         companyPhoneIdToDb.setVisibility(View.VISIBLE);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+    }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void changeCompnayGstNumber(View view) {
-        companyGstNumber.setEnabled(true);
-        companyGstNumber.requestFocus();
-        companyGstNumber.setCursorVisible(true);
-        companyGstId.setVisibility(View.GONE);
-        companyGstToDb.setVisibility(View.VISIBLE);
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        if (stateCheck) {
+            companyGstNumber.setEnabled(true);
+            companyGstNumber.requestFocus();
+            companyGstNumber.setCursorVisible(true);
+            companyGstId.setVisibility(View.GONE);
+            companyGstToDb.setVisibility(View.VISIBLE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
-
     public void changeCompnayNameToDb(View view) {
+        if (stateCheck) {
+            if (!companyName.getText().toString().equals("")){
 
-        companyInfoRef.child(mCurrentUser.getUid()).child("user_name").setValue(companyName.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
+            companyInfoRef.child(mCurrentUser.getUid()).child("user_name").setValue(companyName.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
 
-                if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
 
-                    companyName.setEnabled(false);
-                    companyNameId.setVisibility(View.VISIBLE);
-                    companyNameIdToDb.setVisibility(View.GONE);
-                    Toast.makeText(Saller_Information.this, "Success full!", Toast.LENGTH_SHORT).show();
+                        companyName.setEnabled(false);
+                        companyNameId.setVisibility(View.VISIBLE);
+                        companyNameIdToDb.setVisibility(View.GONE);
+                        Toast.makeText(Saller_Information.this, "Success full!", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        Toast.makeText(Saller_Information.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
-                else {
-                    Toast.makeText(Saller_Information.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
-                }
+            });
+            }else {
+                Toast.makeText(this, "Enter The Name", Toast.LENGTH_SHORT).show();
             }
-        });
-
+        }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void changeCompnayPhoneNumberToDb(View view) {
+        if (stateCheck) {
+           if (!companyPhoneNumber.getText().toString().equals("")){
+            if (companyPhoneNumber.getText().length() != 10) {
+                Toast.makeText(this, "Length should be exactly 10", Toast.LENGTH_SHORT).show();
+                companyPhoneNumber.setError("Length should be exactly 10");
+            } else {
+                companyInfoRef.child(mCurrentUser.getUid()).child("company_phone_number").setValue(companyPhoneNumber.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
 
-        if ( companyPhoneNumber.getText().length()!=10){
-            Toast.makeText(this, "Length should be exactly 10", Toast.LENGTH_SHORT).show();
-            companyPhoneNumber.setError("Length should be exactly 10");
-        }
+                        if (task.isSuccessful()) {
 
-else {
-        companyInfoRef.child(mCurrentUser.getUid()).child("company_phone_number").setValue(companyPhoneNumber.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
+                            companyPhoneNumber.setEnabled(false);
+                            companyPhoneId.setVisibility(View.VISIBLE);
+                            companyPhoneIdToDb.setVisibility(View.GONE);
+                            Toast.makeText(Saller_Information.this, "Success full!", Toast.LENGTH_SHORT).show();
 
-                if (task.isSuccessful()){
-
-                    companyPhoneNumber.setEnabled(false);
-                    companyPhoneId.setVisibility(View.VISIBLE);
-                    companyPhoneIdToDb.setVisibility(View.GONE);
-                    Toast.makeText(Saller_Information.this, "Successfull!", Toast.LENGTH_SHORT).show();
-
-                }
-                else {
-                    Toast.makeText(Saller_Information.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
-                }
+                        } else {
+                            Toast.makeText(Saller_Information.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
-        });
-}
+           }else {
+               Toast.makeText(this, "Enter Your Phone Number", Toast.LENGTH_SHORT).show();
+           }
 
+        }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -528,46 +588,53 @@ else {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        super.onOptionsItemSelected(item);
+        if (stateCheck) {
+            super.onOptionsItemSelected(item);
 
-        if (item.getItemId() == R.id.help_support) {
+            if (item.getItemId() == R.id.help_support) {
 
-            String[] email={"sellers@criof.com"};
+                String[] email = {"sellers@criof.com"};
 
-            Intent intent=new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:"));
-            intent.putExtra(Intent.EXTRA_EMAIL,email);
-            intent.putExtra(Intent.EXTRA_SUBJECT,"Request for Help");
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:"));
+                intent.putExtra(Intent.EXTRA_EMAIL, email);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Request for Help");
 
-            startActivity(Intent.createChooser(intent,"Choose one.."));
-
-
-
+                startActivity(Intent.createChooser(intent, "Choose one.."));
 
 
+            }
+        }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
         return true;
     }
 
     public void changeCompnayGstNumberToDb(View view) {
+        if (stateCheck) {
+             if (!companyGstNumber.getText().toString().equals("")) {
+                 companyInfoRef.child(mCurrentUser.getUid()).child("GST_id").setValue(companyGstNumber.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                     @Override
+                     public void onComplete(@NonNull Task<Void> task) {
 
-        companyInfoRef.child(mCurrentUser.getUid()).child("GST_id").setValue(companyGstNumber.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
+                         if (task.isSuccessful()) {
 
-                if (task.isSuccessful()){
+                             companyGstNumber.setEnabled(false);
+                             companyGstId.setVisibility(View.VISIBLE);
+                             companyGstToDb.setVisibility(View.GONE);
+                             Toast.makeText(Saller_Information.this, "Success full!", Toast.LENGTH_SHORT).show();
 
-                    companyGstNumber.setEnabled(false);
-                    companyGstId.setVisibility(View.VISIBLE);
-                    companyGstToDb.setVisibility(View.GONE);
-                    Toast.makeText(Saller_Information.this, "Success full!", Toast.LENGTH_SHORT).show();
-
-                }
-                else {
-                    Toast.makeText(Saller_Information.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                         } else {
+                             Toast.makeText(Saller_Information.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
+                         }
+                     }
+                 });
+             }else {
+                 Toast.makeText(this, "Enter Your GST No", Toast.LENGTH_SHORT).show();
+             }
+        }else {
+            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -630,8 +697,11 @@ else {
 
 
     public void ChangeProfilePicture(View view) {
-
-        uploadProfilePhoto();
+   if (stateCheck) {
+       uploadProfilePhoto();
+   }else {
+       Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+   }
 
     }
 

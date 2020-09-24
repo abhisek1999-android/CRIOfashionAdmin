@@ -15,8 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +40,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -63,12 +69,43 @@ public class UpdateProductDetails extends AppCompatActivity {
     Double volumerticWeight, sellerPrice, customerPrice, finalWeight, finalSellerPrice;
     Double packageWidth, packageDepth, packageHeight, packageWeight;
     Double fildPrice;
+    Boolean check = false;
+    Boolean stateCheck = true;
 
+    private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+
+            NetworkInfo currentNetworkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (currentNetworkInfo.isConnected()) {
+                if (check) {
+                    stateCheck = true;
+                    Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Connected  ", Snackbar.LENGTH_LONG);
+                    View snakBarView = snackbar.getView();
+                    snakBarView.setBackgroundColor(Color.parseColor("#4ebaaa"));
+                    snackbar.show();
+                }
+            } else {
+                check = true;
+                stateCheck = false;
+                Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Not Connected  ", Snackbar.LENGTH_INDEFINITE);
+                View snakBarView = snackbar.getView();
+                snakBarView.setBackgroundColor(Color.parseColor("#ef5350"));
+                snackbar.show();
+
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Update Details");
         setContentView(R.layout.activity_update_product_details);
+
+
+        getApplicationContext().registerReceiver(mConnReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
         itemName = findViewById(R.id.itemName);
         itemId = findViewById(R.id.itemId);
         no_of_items_Text = findViewById(R.id.noOfItems);
@@ -270,7 +307,7 @@ public class UpdateProductDetails extends AppCompatActivity {
 
 
                     no_of_pieces = sizesItems.getPieces();
-                    priceItem = sizesItems.getMax_price();
+                    priceItem = sizesItems.getMin_price();
                     no_of_items_Text.setText("No of item available: " + no_of_pieces.toString());
                     itemPrice.setText("Price: " + priceItem.toString());
 // this is for increment items
@@ -279,25 +316,39 @@ public class UpdateProductDetails extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-                            if (!incrementField.getText().toString().equals("")) {
+                            if (stateCheck){
+                                if (!incrementField.getText().toString().equals("")) {
 
-                                long numberOfitem = Long.parseLong(incrementField.getText().toString());
+                                    long numberOfitem = Long.parseLong(incrementField.getText().toString());
 
 
-                                productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
-                                        .setValue(numberOfitem + no_of_pieces).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                                    productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
+                                            .setValue(numberOfitem + no_of_pieces).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
 
-                                        Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
-                                        incrementField.setText("");
+                                            Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                            incrementField.setText("");
 
-                                    }
-                                });
+                                        }
+                                    });
 
-                            } else {
+                                } else {
+                                    productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
+                                            .setValue(1 + no_of_pieces).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
 
-                                Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                            incrementField.setText("");
+
+                                        }
+                                    });
+                                  //  Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            else {
+                                Toast.makeText(UpdateProductDetails.this, "No Connection", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -309,12 +360,13 @@ public class UpdateProductDetails extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-                            if (!decrementField.getText().toString().equals("")) {
+                            if (stateCheck){
+                                if (!decrementField.getText().toString().equals("")) {
 
                                 long givenNumberOfitem = Long.parseLong(decrementField.getText().toString());
 
 
-                                if (no_of_pieces > givenNumberOfitem) {
+                                if (no_of_pieces >= givenNumberOfitem) {
                                     productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
                                             .setValue(no_of_pieces - givenNumberOfitem).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -333,8 +385,27 @@ public class UpdateProductDetails extends AppCompatActivity {
 
                             } else {
 
-                                Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                                    if (no_of_pieces >=1) {
+                                        productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("pieces")
+                                                .setValue(no_of_pieces - 1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                                decrementField.setText("");
+
+                                            }
+                                        });
+                                    } else {
+
+                                        Toast.makeText(UpdateProductDetails.this, "Only " + no_of_pieces + " left", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                            }else {
+                                Toast.makeText(UpdateProductDetails.this, "No Connection", Toast.LENGTH_SHORT).show();
                             }
+
 
                         }
                     });
@@ -346,14 +417,14 @@ public class UpdateProductDetails extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-
-                            if (!incrementFieldPrice.getText().toString().equals("")) {
+                            if (stateCheck){
+                                if (!incrementFieldPrice.getText().toString().equals("")) {
 
 
                                 final Double givenPrice = Double.parseDouble(incrementFieldPrice.getText().toString());
 
 
-                                productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("max_price")
+                                productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("min_price")
                                         .setValue(givenPrice + priceItem).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
@@ -365,14 +436,14 @@ public class UpdateProductDetails extends AppCompatActivity {
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                     if (dataSnapshot.exists()){
                                                         SizesItems sizesItems = dataSnapshot.getValue(SizesItems.class);
-                                                        productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("min_price")
-                                                                .setValue(generateCustomerPrice(sizesItems.getMax_price())).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("max_price")
+                                                                .setValue(generateCustomerPrice(sizesItems.getMin_price())).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
 
                                                                 if (task.isSuccessful()) {
 
-                                                                    Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                                                    Snackbar.make(findViewById(android.R.id.content), "Updated  ", Snackbar.LENGTH_SHORT).show();
                                                                     incrementFieldPrice.setText("");
 
 
@@ -403,7 +474,11 @@ public class UpdateProductDetails extends AppCompatActivity {
                             } else {
 
                                 Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                            }}else {
+                                Toast.makeText(UpdateProductDetails.this, "No Connection", Toast.LENGTH_SHORT).show();
                             }
+
+
 
                         }
                     });
@@ -414,13 +489,13 @@ public class UpdateProductDetails extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
 
-
-                            if (!decrementFieldPrice.getText().toString().equals("")) {
+                            if (stateCheck){
+                                if (!decrementFieldPrice.getText().toString().equals("")) {
 
 
                                 final Double givenPrice = Double.parseDouble(decrementFieldPrice.getText().toString());
                                 if (priceItem > givenPrice) {
-                                    productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("max_price")
+                                    productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("min_price")
                                             .setValue(priceItem - givenPrice).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -432,18 +507,16 @@ public class UpdateProductDetails extends AppCompatActivity {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         if (dataSnapshot.exists()){
+
                                                             SizesItems sizesItems = dataSnapshot.getValue(SizesItems.class);
-                                                            productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("min_price")
-                                                                    .setValue(generateCustomerPrice(sizesItems.getMax_price())).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            productRef.child(itemIdIntent).child("color_details").child(colorNameSelector).child("size").child(sizeNameSelector).child("max_price")
+                                                                    .setValue(generateCustomerPrice(sizesItems.getMin_price())).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
 
                                                                     if (task.isSuccessful()) {
-
-                                                                        Toast.makeText(UpdateProductDetails.this, "Updated", Toast.LENGTH_SHORT).show();
+                                                                        Snackbar.make(findViewById(android.R.id.content), "Updated  ", Snackbar.LENGTH_SHORT).show();
                                                                         decrementFieldPrice.setText("");
-
-
                                                                     }
 
                                                                 }
@@ -473,6 +546,9 @@ public class UpdateProductDetails extends AppCompatActivity {
                             } else {
 
                                 Toast.makeText(UpdateProductDetails.this, "Add Some Values", Toast.LENGTH_SHORT).show();
+                            }
+                            }else {
+                                Toast.makeText(UpdateProductDetails.this, "No Connection", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -507,35 +583,37 @@ public class UpdateProductDetails extends AppCompatActivity {
 
     public void addColorClicked(View view) {
 
+if (stateCheck){  if (childItem.equals("Jewellery")) {
 
-        if (childItem.equals("Jewellery")) {
+    Intent intent = new Intent(getApplicationContext(), Jewellery.class);
+    intent.putExtra("itemId", itemIdIntent);
+    intent.putExtra("childCategory", childItem);
+    intent.putExtra("parentCategory", parentCategory);
+    startActivity(intent);
 
-            Intent intent = new Intent(getApplicationContext(), Jewellery.class);
-            intent.putExtra("itemId", itemIdIntent);
-            intent.putExtra("childCategory", childItem);
-            intent.putExtra("parentCategory", parentCategory);
-            startActivity(intent);
+} else if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories")) {
+    Intent intent = new Intent(getApplicationContext(), others_details.class);
+    intent.putExtra("itemId", itemIdIntent);
+    intent.putExtra("childCategory", childItem);
+    intent.putExtra("parentCategory", parentCategory);
+    startActivity(intent);
+} else if (parentCategory.equals("Stationary") | parentCategory.equals("Fashion Accessories")) {
+    Intent intent = new Intent(getApplicationContext(), Stationery.class);
+    intent.putExtra("itemId", itemIdIntent);
+    intent.putExtra("parentCategory", parentCategory);
+    intent.putExtra("childCategory", childItem);
+    startActivity(intent);
+} else {
+    Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
+    intent.putExtra("itemId", itemIdIntent);
+    intent.putExtra("childCategory", childItem);
+    intent.putExtra("parentCategory", parentCategory);
 
-        } else if (parentCategory.equals("Furniture") | parentCategory.equals("Home Accessories")) {
-            Intent intent = new Intent(getApplicationContext(), others_details.class);
-            intent.putExtra("itemId", itemIdIntent);
-            intent.putExtra("childCategory", childItem);
-            intent.putExtra("parentCategory", parentCategory);
-            startActivity(intent);
-        } else if (parentCategory.equals("Stationary") | parentCategory.equals("Fashion Accessories")) {
-            Intent intent = new Intent(getApplicationContext(), Stationery.class);
-            intent.putExtra("itemId", itemIdIntent);
-            intent.putExtra("parentCategory", parentCategory);
-            intent.putExtra("childCategory", childItem);
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(getApplicationContext(), ColorSizeAddingActivity.class);
-            intent.putExtra("itemId", itemIdIntent);
-            intent.putExtra("childCategory", childItem);
-            intent.putExtra("parentCategory", parentCategory);
+    startActivity(intent);
+}}else {
+    Toast.makeText(UpdateProductDetails.this, "No Connection", Toast.LENGTH_SHORT).show();
+}
 
-            startActivity(intent);
-        }
 
 
     }
@@ -593,7 +671,10 @@ public class UpdateProductDetails extends AppCompatActivity {
 
         if (finalWeight < 0.5) {
 
-            if (sellerPrice < 500) {
+            if (sellerPrice<200){
+                finalSellerPrice += 50;
+            }
+            else if (sellerPrice >= 200 && sellerPrice < 500) {
                 finalSellerPrice += 80;
             } else if (sellerPrice >= 500 && sellerPrice < 1000) {
                 finalSellerPrice += 100;
@@ -618,6 +699,13 @@ public class UpdateProductDetails extends AppCompatActivity {
             } else
                 finalSellerPrice += 300;
 
+        }
+
+        else if (finalWeight >= 1.5 && finalWeight <3 ){
+            finalSellerPrice+=400;
+        }
+        else if (finalWeight >= 3 && finalWeight <5 ){
+            finalSellerPrice+=500;
         }
 
 

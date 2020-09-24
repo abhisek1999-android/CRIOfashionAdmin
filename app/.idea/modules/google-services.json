@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "688309531674",
+    "firebase_url": "https://criofashionadmin-f2bfd.firebaseio.com",
+    "project_id": "criofashionadmin-f2bfd",
+    "storage_bucket": "criofashionadmin-f2bfd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:688309531674:android:d1df5f9c5a3e172a3d0da3",
+        "android_client_info": {
+          "package_name": "com.sn77.crio.criofashionadmin.date20200627921am"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "688309531674-394u7audje9edsar82o8gfa7rjiha3p1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sn77.crio.criofashionadmin.date20200627921am",
+            "certificate_hash": "4ca7856cc68b777c87b0a7b9e44cf9632bb2c123"
+          }
+        },
+        {
+          "client_id": "688309531674-qf1a90biopoddd7ebrtr2m5mcglh28ru.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeKcQlum7rrRI5UN96E0DRD_42u_ev9o8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "688309531674-qf1a90biopoddd7ebrtr2m5mcglh28ru.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

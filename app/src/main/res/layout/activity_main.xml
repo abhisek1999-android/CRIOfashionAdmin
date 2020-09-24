@@ -53,11 +53,12 @@
                 android:id="@+id/shortDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/companyName"
+                android:layout_below="@id/brandName"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="12dp"
                 android:hint="Short Description"
+                android:fontFamily="@font/futurapt_font"
                 android:lines="1"
                 android:padding="15dp"/>
 
@@ -71,6 +72,7 @@
         android:layout_marginTop="12dp"
         android:hint="Product Description"
         android:inputType="text|textMultiLine"
+                android:fontFamily="@font/futurapt_font"
         android:lines="4"
         android:padding="8dp"/>
             <EditText
@@ -83,6 +85,7 @@
                 android:layout_marginTop="12dp"
                 android:hint="Product Features"
                 android:inputType="text|textMultiLine"
+                android:fontFamily="@font/futurapt_font"
                 android:lines="8"
                 android:padding="8dp"/>
 
@@ -96,6 +99,7 @@
         android:layout_marginRight="20dp"
         android:hint="Product Overview"
         android:inputType="text|textMultiLine"
+                android:fontFamily="@font/futurapt_font"
         android:lines="2"
         android:padding="8dp"
         android:layout_marginTop="10dp"
@@ -107,8 +111,9 @@
                 android:layout_below="@id/productOverview"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:hint="Product Matearial"
+                android:hint="Product Material"
                 android:inputType="text|textMultiLine"
+                android:fontFamily="@font/futurapt_font"
                 android:lines="1"
                 android:padding="5dp"
                 android:layout_marginTop="10dp"
@@ -122,6 +127,7 @@
                 android:layout_marginTop="10dp"
                 android:hint="Material Weight"
                 android:layout_centerHorizontal="true"
+                android:fontFamily="@font/futurapt_font"
                 android:padding="15dp"
                 android:layout_marginRight="30dp"/>
             <EditText
@@ -133,6 +139,7 @@
                 android:layout_marginRight="20dp"
                 android:hint="Care Instruction"
                 android:inputType="text|textMultiLine"
+                android:fontFamily="@font/futurapt_font"
                 android:lines="2"
                 android:padding="8dp"
                 android:layout_marginTop="10dp"
@@ -146,6 +153,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="8dp"
         android:hint="Product Name"
+        android:fontFamily="@font/futurapt_font"
         android:padding="15dp"
         android:layout_below="@+id/productId"
         />
@@ -159,19 +167,33 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
         android:hint="Company Name"
+        android:fontFamily="@font/futurapt_font"
         android:padding="15dp"
         android:gravity="top"/>
+            <EditText
+                android:id="@+id/brandName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/companyName"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:hint="Brand Name"
+                android:fontFamily="@font/futurapt_font"
+                android:padding="15dp"
+                android:gravity="top"/>
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:fontFamily="@font/futurapt_font"
         android:layout_marginTop="5dp"
         android:text="Insert Product"
         android:textAlignment="center"
-        android:textSize="30sp"
-        android:textStyle="bold|italic" />
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
   <!--  <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/fontImage"
@@ -245,6 +267,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:padding="15dp"
+        android:fontFamily="@font/futurapt_font"
         android:hint="Category"
        >
     </EditText>
@@ -253,6 +276,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/productType"
+        android:fontFamily="@font/futurapt_font"
         android:layout_marginTop="12dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -272,29 +296,34 @@
                 android:id="@+id/productId"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_below="@id/textView2"
                 app:errorEnabled="true">
 
-            <com.google.android.material.textfield.TextInputEditText
+                <com.google.android.material.textfield.TextInputEditText
 
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Product Id"
-                android:padding="15dp"
-                android:inputType="text"
-                android:digits="0123456789*,qwertzuiopasdfghjklyxcvbnm,QWERTZUIOPASDFGHJKLYXCVBNM"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:fontFamily="@font/futurapt_font"
+                    android:hint="Product Id"
+                    android:digits="0123456789,qwertzuiopasdfghjklyxcvbnm,QWERTZUIOPASDFGHJKLYXCVBNM"
+                    android:inputType="textFilter"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:textSize="20dp" />
+            </com.google.android.material.textfield.TextInputLayout>
             <EditText
                 android:id="@+id/packageWidth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/futurapt_font"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="8dp"
-                android:hint="Package Width"
+                android:layout_marginTop="5dp"
+                android:hint="Package Width In cm(eg:20cm)"
                 android:inputType="numberDecimal"
+
                 android:padding="15dp"
                 android:layout_below="@+id/productFor"
                 />
@@ -305,9 +334,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:hint="Package Height"
+                android:hint="Package Height In cm(eg:30cm)"
                 android:inputType="numberDecimal"
                 android:layout_marginTop="10dp"
+                android:fontFamily="@font/futurapt_font"
                 android:padding="15dp"
                 android:layout_below="@+id/packageWidth"
                 />
@@ -318,8 +348,9 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
-                android:hint="Package Weight"
+                android:hint="Weight In Kg(eg:0.5kg)"
                 android:inputType="numberDecimal"
+                android:fontFamily="@font/futurapt_font"
                 android:padding="15dp"
                 android:layout_below="@+id/packageDepth"
                 />
@@ -330,7 +361,8 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="10dp"
-                android:hint="Package Depth"
+                android:hint="Package Depth In Cm(eg: 20cm)"
+                android:fontFamily="@font/futurapt_font"
                 android:inputType="numberDecimal"
                 android:padding="15dp"
                 android:layout_below="@+id/packageHeight"

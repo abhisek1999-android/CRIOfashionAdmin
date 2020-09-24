@@ -49,6 +49,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -69,6 +70,8 @@ public class CompanyDetailsActivity extends AppCompatActivity {
     private EditText userName;
     private EditText sizeChartName;
     private EditText sellerId;
+
+    private String installationId;
     Uri sizeChartUri;
     protected ProgressDialog progressDialog;
     Button upload;
@@ -79,6 +82,7 @@ public class CompanyDetailsActivity extends AppCompatActivity {
   //  CropImageView companyImage;
 
     private DatabaseReference rootRef;
+    private EditText houseNo,city,district,state,pin;
 
     private FirebaseAuth mAuth;
 
@@ -93,6 +97,7 @@ public class CompanyDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Seller Information");
         setContentView(R.layout.activity_company_details);
 
         companyName=findViewById(R.id.companyName);
@@ -109,11 +114,30 @@ public class CompanyDetailsActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         mCurrentUser=mAuth.getCurrentUser();
 
+        houseNo=findViewById(R.id.HouseNo);
+        city=findViewById(R.id.City);
+        district=findViewById(R.id.District);
+        state=findViewById(R.id.State);
+        pin=findViewById(R.id.Pin);
+
 
         sizeChartRecyclerView=findViewById(R.id.sizeChartChoosingRecyclerView);
         sizeChartRecyclerView.hasFixedSize();
         sizeChartRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
 
+
+
+        FirebaseInstallations.getInstance().getId().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    installationId=task.getResult();
+                } else {
+
+                    Log.i("Failed to get id","Failed");
+                }
+            }
+        });
 
         sizeChart = findViewById(R.id.sizeChart);
         sizeChart.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +164,27 @@ public class CompanyDetailsActivity extends AppCompatActivity {
                     }
 
                 }
+            }
+        });
+
+        companyEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+
+                if (!hasFocus){
+
+                    if (!companyEmail.getText().toString().matches(emailPattern)){
+                        companyEmail.setError("Email not valid");
+                    }else {
+                        companyEmail.setError(null);
+                    }
+
+                }
+
+
+
+
             }
         });
 
@@ -198,161 +243,218 @@ public class CompanyDetailsActivity extends AppCompatActivity {
 
     public void addImage(View view) {
 
-        showProgressDialog();
 
-        //testing null or empty edit Text
-        if (companyName.getText().toString().equals("")){
-            companyName.setError("Non empty Filed");
-        }else {
-            companyName.setError(null);
-        }
-        if (userName.getText().toString().equals("")){
-            userName.setError("Non empty Filed");
-        }else {
-            userName.setError(null);
-        }
-        if (!companyEmail.getText().toString().matches(emailPattern)){
-            companyEmail.setError("Email not valid");
-        }else {
-            companyEmail.setError(null);
-        }
-        if (companyPhoneNumber.getText().toString().equals("")){
-            companyPhoneNumber.setError("Non empty Filed");
-        }
-        else {
-            companyPhoneNumber.setError(null);
-        }
-        if (sellerId.getText().toString().equals("")){
-            sellerId.setError("Non empty Filed");
-        }else {
-            sellerId.setError(null);
-        }
+      if(isConnected(getApplicationContext()))
+      {
 
+          showProgressDialog();
 
-        String deviceToken= FirebaseInstanceId.getInstance().getToken();
-        final Map companyDetails=new HashMap();
-        companyDetails.put("company_name",companyName.getText().toString());
-        companyDetails.put("user_name",userName.getText().toString());
-        companyDetails.put("company_email",companyEmail.getText().toString());
-        companyDetails.put("company_phone_number",companyPhoneNumber.getText().toString());
-        companyDetails.put("GST_id",companyGstId.getText().toString());
-        companyDetails.put("company_id",mCurrentUser.getUid());
-        companyDetails.put("seller_id",sellerId.getText().toString());
-        companyDetails.put("device_token",deviceToken);
-
-
-
-
-
-
-if (!companyName.getText().toString().equals("") & !userName.getText().toString().equals("") &
-        !companyEmail.getText().toString().equals("")& !companyPhoneNumber.getText().toString().equals("")&!sellerId.getText().toString().equals("")&companyPhoneNumber.getText().length()==10)
-{
-
-  //  Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
-
-
-
-
-    if (userImageUri!=null && (CheckImageSize(sizeChartUri) / 1024)<160){
-
-        final StorageReference riversRef = pStorageRef.child("Seller_image").child(mCurrentUser.getUid()).child("user_image.jpg");
-
-        riversRef.putFile(userImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        final String downloadUrl = uri.toString();
-
-                        companyDetails.put("user_image",downloadUrl);
-
-                        rootRef.child("company_details").child(mCurrentUser.getUid()).updateChildren(companyDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if (task.isSuccessful()){
-                                    dismissProgressDialog();
-                                    Toast.makeText(CompanyDetailsActivity.this, "Added Successfully", Toast.LENGTH_SHORT).show();
-                                    Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
-                                    startActivity(intent);
-                                }
-
-
-                                else {
-                                    dismissProgressDialog();
-                                    Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                dismissProgressDialog();
-                                Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+          //testing null or empty edit Text
+          if (companyName.getText().toString().equals("")){
+              companyName.setError("Give company name");
+          }else {
+              companyName.setError(null);
+          }
+          if (userName.getText().toString().equals("")){
+              userName.setError("Give user name");
+          }else {
+              userName.setError(null);
+          }
+          if (!companyEmail.getText().toString().matches(emailPattern)){
+              companyEmail.setError("Email not valid");
+          }else {
+              companyEmail.setError(null);
+          }
+          if (companyPhoneNumber.getText().toString().equals("")){
+              companyPhoneNumber.setError("Give the phone number");
+          }
+          else {
+              companyPhoneNumber.setError(null);
+          }
+          if (sellerId.getText().toString().equals("")){
+              sellerId.setError("Give seller id");
+          }else {
+              sellerId.setError(null);
+          }
+          if (houseNo.getText().toString().equals("")){
+              houseNo.setError("Give House No");
+          }else {
+              houseNo.setError(null);
+          }
+          if (city.getText().toString().equals("")){
+              city.setError("Give city");
+          }else {
+              city.setError(null);
+          }
+          if (district.getText().toString().equals("")){
+              district.setError("Give district");
+          }else {
+              district.setError(null);
+          }
+          if (state.getText().toString().equals("")){
+              state.setError("Give state");
+          }else {
+              state.setError(null);
+          }
+          if (pin.getText().toString().equals("")){
+              pin.setError("Give pin");
+          }else {
+              pin.setError(null);
+          }
 
 
 
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-                // Toast.makeText(CompanyDetailsActivity.this, "done", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }else {
-
-        companyDetails.put("user_image","default");
-
-        rootRef.child("company_details").child(mCurrentUser.getUid()).updateChildren(companyDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-                if (task.isSuccessful()){
-                    dismissProgressDialog();
-                    Toast.makeText(CompanyDetailsActivity.this, "Added Successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
-                    startActivity(intent);
-                }
 
 
-                else {
-                    dismissProgressDialog();
-                    Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-                }
+          String deviceToken= FirebaseInstanceId.getInstance().getToken();
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                dismissProgressDialog();
-                Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+          final Map companyDetails=new HashMap();
+          companyDetails.put("company_name",companyName.getText().toString());
+          companyDetails.put("user_name",userName.getText().toString());
+          companyDetails.put("company_email",companyEmail.getText().toString());
+          companyDetails.put("company_phone_number",companyPhoneNumber.getText().toString());
+          companyDetails.put("GST_id",companyGstId.getText().toString());
+          companyDetails.put("company_id",mCurrentUser.getUid());
+          companyDetails.put("seller_id",sellerId.getText().toString());
+          companyDetails.put("device_token",deviceToken);
+          companyDetails.put("installation_id",installationId);
 
 
-    }
+          final Map address=new HashMap();
+          address.put("house_no",houseNo.getText().toString());
+          address.put("city",city.getText().toString());
+          address.put("district",district.getText().toString());
+          address.put("state",state.getText().toString());
+          address.put("pin",pin.getText().toString());
+
+          if (!companyName.getText().toString().equals("") & !userName.getText().toString().equals("") &
+                  !companyEmail.getText().toString().equals("")& !companyPhoneNumber.getText().toString().equals("")&!sellerId.getText().toString().equals("")
+                  & !houseNo.getText().toString().equals("") & !city.getText().toString().equals("") & !district.getText().toString().equals("") & !state.getText().toString().equals("")
+                  & !pin.getText().toString().equals("") &companyPhoneNumber.getText().length()==10)
+          {
+
+              //  Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
+              if (userImageUri!=null && (CheckImageSize(sizeChartUri) / 1024)<160){
+
+                  final StorageReference riversRef = pStorageRef.child("Seller_image").child(mCurrentUser.getUid()).child("user_image.jpg");
+
+                  riversRef.putFile(userImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                      @Override
+                      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                          riversRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                              @Override
+                              public void onSuccess(Uri uri) {
+                                  final String downloadUrl = uri.toString();
+
+                                  companyDetails.put("user_image",downloadUrl);
+
+                                  rootRef.child("company_details").child(mCurrentUser.getUid()).updateChildren(companyDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                      @Override
+                                      public void onComplete(@NonNull Task<Void> task) {
+
+                                          if (task.isSuccessful()){
+                                              rootRef.child("company_details").child(mCurrentUser.getUid()+"/address/").updateChildren(address, new DatabaseReference.CompletionListener() {
+                                                  @Override
+                                                  public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                                                      if (databaseError==null){
+
+                                                          Toast.makeText(CompanyDetailsActivity.this, "Added Successfully", Toast.LENGTH_SHORT).show();
+                                                          dismissProgressDialog();
+                                                          Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                                                          startActivity(intent);
+
+                                                      }else {
+                                                          Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                                      }
+
+                                                  }
+                                              });
+                                          }
+
+
+                                          else {
+                                              dismissProgressDialog();
+                                              Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                          }
+
+                                      }
+                                  }).addOnFailureListener(new OnFailureListener() {
+                                      @Override
+                                      public void onFailure(@NonNull Exception e) {
+                                          dismissProgressDialog();
+                                          Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                      }
+                                  });
 
 
 
-    }
-else {
-    Toast.makeText(this, "Some Error occurred", Toast.LENGTH_SHORT).show();
-    dismissProgressDialog();
-}
+
+                              }
+                          }).addOnFailureListener(new OnFailureListener() {
+                              @Override
+                              public void onFailure(@NonNull Exception e) {
+                                  Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+
+                              }
+                          });
+
+                          // Toast.makeText(CompanyDetailsActivity.this, "done", Toast.LENGTH_SHORT).show();
+
+                      }
+                  });
+              }else {
+
+                  companyDetails.put("user_image","default");
+
+                  rootRef.child("company_details").child(mCurrentUser.getUid()).updateChildren(companyDetails, new DatabaseReference.CompletionListener() {
+                      @Override
+                      public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                          if (databaseError==null){
 
 
+                              rootRef.child("company_details").child(mCurrentUser.getUid()+"/address/").updateChildren(address, new DatabaseReference.CompletionListener() {
+                                  @Override
+                                  public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                                      if (databaseError==null){
+
+                                          Toast.makeText(CompanyDetailsActivity.this, "Added Successfully", Toast.LENGTH_SHORT).show();
+                                          dismissProgressDialog();
+                                          Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                                          startActivity(intent);
+
+                                      }else {
+                                          dismissProgressDialog();
+                                          Toast.makeText(CompanyDetailsActivity.this, "Error Occurred!", Toast.LENGTH_SHORT).show();
+                                      }
+
+                                  }
+                              });
+
+                          }
+
+                      }
+                  });
+
+
+              }
+
+
+
+          }
+          else {
+              Toast.makeText(this, "Some Fields Are Empty", Toast.LENGTH_SHORT).show();
+              dismissProgressDialog();
+          }
+      }
+
+      else {
+          dismissProgressDialog();
+          Toast.makeText(this, "No Internet", Toast.LENGTH_SHORT).show();
+      }
 
     }
 

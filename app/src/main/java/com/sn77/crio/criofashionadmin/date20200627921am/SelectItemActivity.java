@@ -23,6 +23,7 @@ public class SelectItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Select Product Type");
         setContentView(R.layout.activity_select_item);
 
         expandableListView = (ExpandableListView) findViewById(R.id.expandableListView);

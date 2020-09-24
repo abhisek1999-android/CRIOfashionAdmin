@@ -11,5 +11,41 @@
         android:layout_height="match_parent"
         android:id="@+id/returnedItemListView"
         />
+    <RelativeLayout
+        android:id="@+id/ownProgressDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ProgressBar
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            /></RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/notFoundLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff"
+       android:visibility="gone"
+        android:layout_centerInParent="true">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/notFoundImage"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/no_return"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/notFoundImage"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:text="Yeh!! No Returns"
+            android:fontFamily="@font/futurapt_font"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

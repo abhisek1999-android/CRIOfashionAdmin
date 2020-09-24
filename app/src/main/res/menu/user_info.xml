@@ -10,4 +10,7 @@
         />
     <item android:id="@+id/returned_products"
         android:title="Returned Products"/>
+    <item android:id="@+id/Sign_Out"
+        android:title="Sing Out"/>
+
 </menu>

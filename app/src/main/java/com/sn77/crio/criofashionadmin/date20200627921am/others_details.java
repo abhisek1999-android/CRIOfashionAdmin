@@ -3,8 +3,10 @@ package com.sn77.crio.criofashionadmin.date20200627921am;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import es.dmoral.toasty.Toasty;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,8 +28,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +51,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -75,8 +80,13 @@ public class others_details extends AppCompatActivity {
     Boolean check=false;
     Boolean stateCheck=true;
 
+    RelativeLayout imagesLayout;
 
+    Button updateDetails;
 
+    TextView productMfd;
+    EditText productMrp;
+    DatePickerDialog pickerDialog;
 
     Double volumerticWeight,sellerPrice,customerPrice,finalWeight,finalSellerPrice;
     Double packageWidth,packageDepth,packageHeight,packageWeight;
@@ -118,6 +128,7 @@ public class others_details extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("Add Details");
         setContentView(R.layout.activity_others_details);
 
 
@@ -125,6 +136,7 @@ public class others_details extends AppCompatActivity {
                 new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));//CHECKING CONNECTIVIT
 
         color_name = findViewById(R.id.colorName);
+
         size_description = findViewById(R.id.sizeDescription);
         base_material = findViewById(R.id.productFilling);
         product_size = findViewById(R.id.productSize);
@@ -135,9 +147,13 @@ public class others_details extends AppCompatActivity {
         numberOf_Pieces = findViewById(R.id.numberOfPieces);
         idTextView = findViewById(R.id.copyId);
         product_warranty = findViewById(R.id.productWarranty);
+        productMrp=findViewById(R.id.productMrp);
         rootReference = FirebaseDatabase.getInstance().getReference();
         pStorageRef = FirebaseStorage.getInstance().getReference();
         intentItemId = getIntent().getStringExtra("itemId");
+
+        imagesLayout=findViewById(R.id.imagesLayout);
+        updateDetails=findViewById(R.id.updateDetails);
 
         imageTex1 = findViewById(R.id.text1);
         imageTex2 = findViewById(R.id.text2);
@@ -324,6 +340,43 @@ public class others_details extends AppCompatActivity {
 
 
 
+        color_name.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if (!color_name.getText().toString().equals("")){
+
+                    if(!hasFocus){
+                        rootReference.child("products").child(intentItemId).child("color_details").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.hasChild(color_name.getText().toString())){
+
+                                    imagesLayout.setVisibility(View.GONE);
+                                    updateDetails.setVisibility(View.VISIBLE);
+
+                                }
+                                else {
+                                    // Toast.makeText(MainActivity.this, productId.getEditText().getText().toString()+seller_id, Toast.LENGTH_SHORT).show();
+                                    imagesLayout.setVisibility(View.VISIBLE);
+                                    updateDetails.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }  else {
+                        Toast.makeText(others_details.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+            }
+        });
 
 
               product_size.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -377,6 +430,13 @@ public class others_details extends AppCompatActivity {
             }
         });
 
+        updateDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateNewSize();
+            }
+        });
+
 
         product_price_max.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -387,6 +447,117 @@ public class others_details extends AppCompatActivity {
                 }
             }
         });
+
+
+        productMfd=findViewById(R.id.productMfd);
+        productMfd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                // date picker dialog
+                pickerDialog = new DatePickerDialog(others_details.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                productMfd.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                pickerDialog.show();
+
+
+
+
+
+
+
+            }
+        });
+
+    }
+
+    private void updateNewSize() {
+
+        final String sizePathString = "products/" + intentItemId + "/color_details/" + color_name.getText().toString() + "/size/";
+
+
+        final String colorname = color_name.getText().toString();
+        String sizedescription = size_description.getText().toString();
+        final String baseMaterial = base_material.getText().toString();
+        final String procuctSize = product_size.getText().toString();
+        final String packageincludes = package_includes.getText().toString();
+        String productPriceMax = product_price_max.getText().toString();
+        String productPriceMin = product_price_min.getText().toString();
+        String numberOfPieces = numberOf_Pieces.getText().toString();
+        String productWarranty = product_warranty.getText().toString();
+        String product_mrp = productMrp.getText().toString();
+        String product_mfd = productMfd.getText().toString();
+
+        final Map sizedetailsMap = new HashMap();
+        sizedetailsMap.put("size", procuctSize);
+        sizedetailsMap.put("min_price", Double.parseDouble(productPriceMax.trim()));
+        sizedetailsMap.put("max_price", Double.parseDouble(productPriceMin.trim()));
+        sizedetailsMap.put("pieces", Double.parseDouble(numberOfPieces.trim()));
+        sizedetailsMap.put("mrp", Double.parseDouble(product_mrp.trim()));
+        sizedetailsMap.put("mfd", product_mfd);
+
+
+        if (color_name.getText().toString().equals("")
+                | product_size.getText().toString().equals("") |
+                product_price_max.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("")
+                | productMrp.getText().toString().equals("")   | productMfd.getText().toString().equals("Product MFD")
+                | product_price_min.getText().toString().equals("")) {
+
+
+            Toasty.error(this, "Fields Are Empty", Toast.LENGTH_SHORT).show();
+        }
+     else {
+
+            if (validColor.equals("available")){
+
+                rootReference.child(sizePathString + procuctSize).updateChildren(sizedetailsMap, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+
+                        if (databaseError==null){
+
+                            Toast.makeText(others_details.this, "Done", Toast.LENGTH_SHORT).show();
+                            base_material.setEnabled(false);
+                            package_includes.setEnabled(false);
+                            product_warranty.setEnabled(false);
+                            imagesLayout.setVisibility(View.VISIBLE);
+                            updateDetails.setVisibility(View.GONE);
+
+                            color_name.setText("");
+                            size_description.setText("");
+                            product_size.setText("");
+                            product_price_max.setText("");
+                            numberOf_Pieces.setText("");
+                            productMfd.setText("Product MFD");
+                            productMrp.setText("");
+
+                        }
+
+                    }
+                });
+
+            }else {
+                Toast.makeText(this, "Size Already exists!", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+
+
+
+
 
     }
 
@@ -559,6 +730,7 @@ public class others_details extends AppCompatActivity {
         if (color_name.getText().toString().equals("") | size_description.getText().toString().equals("")
                 | product_size.getText().toString().equals("") | base_material.getText().toString().equals("") |
                 product_price_max.getText().toString().equals("") | numberOf_Pieces.getText().toString().equals("")
+                | productMrp.getText().toString().equals("")   | productMfd.getText().toString().equals("Product MFD")
                 | product_price_min.getText().toString().equals("") | images.size() == 0) {
 
             Toast.makeText(getApplicationContext(), "Some Fields Are Empty", Toast.LENGTH_SHORT).show();
@@ -574,7 +746,7 @@ public class others_details extends AppCompatActivity {
                     AlertDialog alertbox = new AlertDialog.Builder(this)
                             .setTitle("Are you Sure?")
                             .setIcon(R.drawable.ic_baseline_warning_24)
-                            .setMessage("Some images are not less then 150 kb, this images are not going to be uploaded.\n Are you sure?")
+                            .setMessage("Some images are not less then 500 kb, this images are not going to be uploaded.\n Are you sure?")
                             .setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface arg0, int arg1) {
@@ -637,7 +809,8 @@ public class others_details extends AppCompatActivity {
         String productPriceMin = product_price_min.getText().toString();
         String numberOfPieces = numberOf_Pieces.getText().toString();
         String productWarranty = product_warranty.getText().toString();
-
+        String product_mrp = productMrp.getText().toString();
+        String product_mfd = productMfd.getText().toString();
 
         Map otherDetailsProductHashMap = new HashMap();
         otherDetailsProductHashMap.put("size_description", sizedescription);
@@ -647,9 +820,12 @@ public class others_details extends AppCompatActivity {
 
         final Map sizedetailsMap = new HashMap();
         sizedetailsMap.put("size", procuctSize);
-        sizedetailsMap.put("max_price", Double.parseDouble(productPriceMax.trim()));
-        sizedetailsMap.put("min_price", Double.parseDouble(productPriceMin.trim()));
+        sizedetailsMap.put("min_price", Double.parseDouble(productPriceMax.trim()));
+        sizedetailsMap.put("max_price", Double.parseDouble(productPriceMin.trim()));
         sizedetailsMap.put("pieces", Double.parseDouble(numberOfPieces.trim()));
+        sizedetailsMap.put("mrp", Double.parseDouble(product_mrp.trim()));
+        sizedetailsMap.put("mfd", product_mfd);
+
 
         rootReference.child("products").child(intentItemId).updateChildren(otherDetailsProductHashMap, new DatabaseReference.CompletionListener() {
             @Override
@@ -674,7 +850,6 @@ public class others_details extends AppCompatActivity {
 
                             }
                             else {
-                                Toast.makeText(others_details.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -740,7 +915,7 @@ public class others_details extends AppCompatActivity {
 
     }
 
-    private void saveImageUrl(String downloadUrl, String colorname) {
+    private void saveImageUrl(String downloadUrl, final String colorname) {
 
 
         Map hashMap = new HashMap<>();
@@ -765,16 +940,44 @@ public class others_details extends AppCompatActivity {
 
 
 
-                    imageTex1.setText("image1");
+                    imageTex1.setText("image1*");
                     imageTex2.setText("image2");
                     imageTex3.setText("image3");
                     imageTex4.setText("image4");
                     imageTex5.setText("image5");
                     imageTex6.setText("image6");
 
-
-
-
+                 if (imageUri1!=null)
+                 {
+                    imageUri1=null;
+                 }
+                 if (imageUri2!=null)
+                 {
+                    imageUri2=null;
+                 }
+                 if (imageUri3!=null)
+                 {
+                    imageUri3=null;
+                 }
+                 if (imageUri4!=null)
+                 {
+                    imageUri4=null;
+                 }
+                 if (imageUri5!=null)
+                 {
+                     imageUri5=null;
+                 }
+                 if (imageUri6!=null)
+                 {
+                     imageUri6=null;
+                 }
+                 color_name.setText("");
+                 size_description.setText("");
+                 product_size.setText("");
+                 product_price_max.setText("");
+                 numberOf_Pieces.setText("");
+                 productMfd.setText("Product MFD");
+                 productMrp.setText("");
                     rootReference.child("products").child(intentItemId).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -830,7 +1033,7 @@ public class others_details extends AppCompatActivity {
                 if (databaseError == null) {
                     Log.i("done", "done");
                 } else {
-                    Toast.makeText(others_details.this, "Error occurred for updateing status.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(others_details.this, "Error occurred for updating status.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -849,6 +1052,8 @@ public class others_details extends AppCompatActivity {
                     if (dataSnapshot.hasChild("warranty_description")) {
                         Log.i("msg", "msg");
                         finish();
+                        //Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                        //startActivity(intent);
                     } else {
                         exitByBackKey();
 
@@ -880,6 +1085,8 @@ public class others_details extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 finish();
+                                Intent intent=new Intent(getApplicationContext(),Inventory_Activity.class);
+                                startActivity(intent);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -919,12 +1126,17 @@ public class others_details extends AppCompatActivity {
           else
               finalWeight=volumerticWeight;
 
-
+        if (packageWeight == volumerticWeight)
+            finalWeight = packageWeight;
 
           if (finalWeight<0.5){
 
-              if (sellerPrice<500){
-                  finalSellerPrice+=80;
+              if (sellerPrice<200){
+                  finalSellerPrice += 50;
+              }
+
+              else if (sellerPrice >= 200 && sellerPrice < 500) {
+                  finalSellerPrice += 80;
               }
               else if (sellerPrice>=500 && sellerPrice<1000){
                   finalSellerPrice+=100;
@@ -957,6 +1169,12 @@ public class others_details extends AppCompatActivity {
               else
                   finalSellerPrice+=300;
 
+          }
+          else if (finalWeight >= 1.5 && finalWeight <3 ){
+              finalSellerPrice+=400;
+          }
+          else if (finalWeight >= 3 && finalWeight <5 ){
+              finalSellerPrice+=500;
           }
 
           if (parentItem.equals("Home Accessories")){

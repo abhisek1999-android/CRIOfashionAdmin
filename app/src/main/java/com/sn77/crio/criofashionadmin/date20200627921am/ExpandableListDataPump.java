@@ -36,7 +36,7 @@ public class ExpandableListDataPump {
         MansFashion.add("Jackets");
         MansFashion.add("Jeans");
         MansFashion.add("Trousers");
-        MansFashion.add("Under Garments");
+        MansFashion.add("Inner wear");
         MansFashion.add("Shorts");
 
 
@@ -52,12 +52,13 @@ public class ExpandableListDataPump {
         fashionGirls.add("Hot Pants");
         fashionGirls.add("Skirt");
         fashionGirls.add("One Piece");
-        fashionGirls.add("Gawn");
+        fashionGirls.add("Gown");
         fashionGirls .add("T-Shirt");
         fashionGirls.add("Jackets");
         fashionGirls.add("Night Wear");
         fashionGirls.add("Saree");
-        fashionGirls.add("Scerf");
+        fashionGirls.add("Scarf");
+        fashionGirls.add("Inner wear");
 
 
         List<String> Stationary = new ArrayList<String>();
